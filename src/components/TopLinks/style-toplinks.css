@@ -1,0 +1,17 @@
+.toplink-bar{
+     width:100%;
+    padding:12px 10px;
+    background-color:#f8f8f8;
+    border: 1px solid #c6c6cc;
+    
+}
+.btncolor2{
+    background-color: #245f4c;
+    
+}
+.btn-style{
+    min-width:70px;
+    width:max-content;
+    background-color:#68889e !important;
+   /*  border-color: #531486;#2c5c5eef #ce15c5 */
+}

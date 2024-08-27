@@ -1,0 +1,35 @@
+
+
+.profile ul{
+    list-style: none;
+}
+.profile > ul{
+   margin: 0;
+   padding: 0;
+}
+.profile img{
+    max-height: 36px;
+}
+.profile span{
+    font-size: 14px;
+    font-weight: 600;
+}
+.profile .dropdown-header h6{
+    font-size: 18px;
+    margin-bottom: 0;
+    font-weight: 600;
+    color:#444444
+}
+.profile .dropdown-header span{
+    font-size: 14px;
+   
+}
+.profile .dropdown-item i{
+    margin-right: 10px;
+    font-size: 24px;
+    line-height: 0;   
+}
+.profile .dropdown-item:hover{
+   background-color: #f6f9ff;   
+}
+

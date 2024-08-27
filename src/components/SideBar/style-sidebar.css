@@ -1,0 +1,125 @@
+
+.sidebar{
+    position: fixed;
+    top:60px;
+    left: 0px;
+    bottom: 0;
+    width: 230px;
+    z-index: 80;
+    transition: all 0.3s;
+    padding: 30px 20px 20px;
+    overflow-y: auto;
+    scrollbar-width: thin;
+    scrollbar-color: #aab7cf transparent;
+    box-shadow: rgba(0, 0, 0, .25) 5px 0 12px 3px;
+    background-color: #bdb4cc;
+}
+
+@media screen and (max-width: 944px){
+    .sidebar{
+        left:-230px
+    };
+}
+.sidebar::-webkit-scrollbar{
+    width:5px;
+    height: 8px;
+    background-color: #fff;
+}
+.sidebar::-webkit-scrollbar-thumb{
+    background-color: #aab7cf;
+}
+@media screen and (min-width:945px){
+    #main, #footer{
+        margin-left:235px;
+        width:83;
+    }
+}
+@media screen and (max-width:944px){
+ .toggle-sidebar .sidebar{
+    left:0
+ }
+}
+@media screen and (min-width:945px){
+    .toggle-sidebar #main,
+    .toggle-sidebar #footer{
+       left:0;
+       margin-left: auto;
+       width:97%;
+    }
+    .toggle-sidebar .sidebar{
+        left:-230px
+     }
+   }
+.sidebar-nav{
+    padding: 0;
+    margin: 0;
+    list-style: none;
+}
+.sidebar-nav .nav-item{
+    margin:5px 0 15px
+}
+.sidebar-nav li{
+    padding: 0;
+    margin: 0;
+    list-style: none;
+}
+.sidebar-nav .nav-heading{
+    font-size: 12px;
+    text-transform: uppercase;
+    margin:10px 0 5 15px;
+    color:#899bbd;
+}
+.sidebar-nav .nav-link{
+    display:flex;
+    align-items: center;
+    font-size: 15px;
+    font-weight: 600;
+    color:#f1f5d4;
+    transition:0.3;
+    background:#3c3c50 /* #0b0541 */;
+    padding:10px 15px;
+    border-radius: 4px;
+}
+.sidebar-nav .nav-link i{
+    font-size: 16px;
+    margin-right:10px;
+    color:#f1f5d4;
+}
+.sidebar-nav .nav-link.collapsed{
+ 
+    color:#f1f5d4;
+   /*  background: #fff; */
+}
+
+.sidebar-nav a.nav-link:hover{
+     color:#5febeb/* #e3ee83 */; 
+   
+}
+.sidebar-nav .nav-link .bi-chevron-down{
+   margin-right:0;
+   transition:transform 0.2s ease-in-out;
+  
+}
+.sidebar-nav .nav-link:not(.collapsed) .bi-chevron-down{
+   transform: rotate(180deg);   
+ }
+.sidebar-nav .nav-content{
+    padding:5px 0 0 0;
+    background-color:#3c3c50;
+    border-bottom-left-radius:10px;
+    border-bottom-right-radius: 10px;
+}
+.sidebar-nav .nav-content li{
+ padding:7px 10 3px;
+ margin:4px 0 3px 20px;
+
+}
+.sidebar-nav .nav-content li a{
+  color:#fff; 
+  text-decoration: none;
+  font:normal 0.89em verdana , sans-serif;
+}
+.sidebar-nav .nav-content:hover{
+    text-decoration: none;
+
+}

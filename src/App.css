@@ -1,0 +1,367 @@
+/*--------------------------------------------------------------------------
+# Override some default Bostrap stylings
+---------------------------------------------------------------------------*/
+/* Dropdown menus */
+.dropdown-menu{
+  border-radius: 4px;
+  padding:10px 0;
+  -webkit-animation-name: dropdown-animate;
+  animation-name: dropdown-animate;
+  -webkit-animation-duration: 0.2s;
+  animation-duration: 0.2;
+  -webkit-animation-fill-mode: both;
+  animation-fill-mode: both;
+  border:0;
+  box-shadow: 0 5px 30px 0 rgba(82,63,105,0.2);
+}
+.dropdown-menu .dropdown-header, .dropdown-menu .dropdown-footer{
+  text-align: center;
+}
+.dropdown-menu .dropdown-footer a{
+  color:#444444;
+  text-decoration: underline;
+}
+.dropdown-menu .dropdown-footer a:hover{
+text-decoration: none;
+}
+.dropdown-menu .dropdown-divider {
+color:#a5c5fe;
+margin: 0;
+}
+.dropdown-menu .dropdown-item {
+  font-size: 14px;
+ padding:10px 15px;
+ transition:0.3s;
+}
+.dropdown-menu .dropdown-item i{
+  margin-right: 10px;
+  font-size: 18px;
+  line-height: 0;
+}
+
+.dropdown-menu .dropdown-item:hover{
+  background-color: #f6f9ff;
+}
+@media screen and(min-width) {
+  .dropdown-menu-arrow::before{
+      content: '';
+      width:13px;
+      height: 13px;
+      background: #fff;
+      position: absolute;
+      top: -7px;
+      right: 20px;
+      transform: rotate(45deg);
+      border-top: 1px solid #eaedf1;
+      border-left:1px solid #eaedf1
+  }
+}
+@-webkit-keyframes dropdown-animate{
+  0% {
+     opacity: 0;
+  }
+  100% {
+      opacity: 1;
+  }
+  0% {
+      opacity: 0;
+  }
+}
+@keyframes dropdown-animate{
+  0% {
+     opacity: 0;
+  }
+  100% {
+      opacity: 1;
+  }
+  0% {
+      opacity: 0;
+  }
+}
+/* ----------------------------- End of bootstrap overide  */
+.border-line{
+    border:1px solid #e21122;
+}
+.center{
+    margin:0 auto;
+}
+.float_L{
+  float: left;
+}
+.float_R{
+  float: right;
+}
+
+.cf:before, .cf:after {content:" "; display:table;}
+.cf:after{clear: both;}
+a:hover{
+  text-decoration: none;
+}
+.errTxt{
+  color:#E80000;
+  margin:1px 0 3px;
+  width:90%;
+  font:normal 0.9em Verdana, Geneva, sans-serif;
+}
+.relative{
+  position: relative;
+}
+.absolute{
+  position: absolute;
+}
+.section-login{
+    margin-top:130px;
+  }
+.bar-color{
+  background: #3c3c50;
+}
+.shadow{
+  box-shadow:rgba(84, 124, 235, 0.34) 0 0 18px 2px;
+}
+.sub-caption{
+  font-weight: normal;
+  
+}
+.loading{
+  color:#097a4f;
+  width:90%;
+  max-width: 230px;
+  font: normal 1.4em Arial, Helvetica, sans-serif;
+  margin:50px 0 0 35px;
+ }
+.page-enclose{
+  display:flex;
+  flex-direction:column;
+  justify-content: space-between; 
+  max-width: 2400px;
+  min-height:100vh;
+}
+.text-input{
+  border-radius: 4px;  
+  height:32px;
+  border:1px groove #dee2e6;  
+  font:normal 1em  Verdana, Calibri, Arial, Times New Roman  sans-serif;  
+}
+.text-input:focus{
+  /* box-shadow:rgba(9, 151, 245, 0.34) 0 0 18px 2px; */
+  border:1px groove #0997f5 ;
+}
+.page-caption {
+  margin:13px auto 4px;
+  width:80%;
+  min-width:244px;
+  max-width:293px;
+  font:bold 1.2em "Arial Narrow";
+}
+/***  Admin landing ***/
+.dashboard-home{
+  display: flex;
+}
+#main{
+  margin:98px auto;
+  width:97%;
+  min-width:337px;
+  border:1px solid #616161;
+  padding: 3px;
+  border-radius: 8px;
+  min-height: 320px;
+}
+.counters-sctn{
+  margin:20px auto;
+  width:94%;
+  padding:5px 20px;
+}
+
+.books-recent .header-title{
+  width:95%;
+  max-width:280px;
+  font-size: 1.3em ;
+  margin:5px auto;
+  color:#1d1e63;
+}
+
+/***  catalogue page***/
+ .catalogue-pg h3{
+   width:80%;
+   min-width:200px;
+   max-width:240px;
+   font:bold 1.8em "Arial Narrow",Calibri,sans-serif;
+   margin:20px auto;    
+ }
+ 
+ .catalogue-form{   
+  width:95%;
+  margin:10px 0 32px 10px;
+  box-shadow:rgba(84, 124, 235, 0.34) 0 0 18px 2px;
+  border-radius: 10px;
+  padding:20px 15px;
+  max-width: 473px !important;
+  max-height: 343px;
+ }
+.loop-gif{
+   width:60px !important;
+   margin:0;
+ }
+ .spinner-position{
+   position:absolute;
+   left:32px;
+   top:25px;
+
+ }
+ .catalogue-form label{
+  margin-top:20px;
+  
+ }
+ .cat-tree-section{
+  max-width:460px;
+ }
+ .cat-tree-section h5{
+   margin:1px auto 2px;
+   width:90%;
+   max-width:293px;
+   font:bold 1.2em "Arial Narrow";
+ }
+
+ .catalogue-table{
+   max-width:400px;
+   margin:10px 0 20px 1px;
+ }
+ .catalogue-form .textarea{
+  height: 120px;
+  min-height: 100px;
+ }
+ .catalogue-accordion{
+  padding:0;
+ }
+/***  Token generator page ***/
+ .token-gen-container{
+   width:100%;
+ }
+ .token-section h5{
+  font:bold 1.5em "Arial Narrow", Times New Roman, sans-serif;
+  height: 30px;
+  align-self:center;
+ }
+
+ .keyIcon{
+  margin-left:10px;
+  margin-top:0;
+  padding:0;
+  font-size:50px;
+  align-self:flex-start;
+  }
+ .gen-panel{
+   min-width: 307px;
+   max-width: 550px;
+   border-radius: 14px;
+   padding:20px;
+   margin:10px auto;
+  
+ }
+ .gen-btn{
+  height: 43px !important;
+  
+ }
+ .gen-text{
+  height:43px;
+  width:75%;
+  min-width: 189px;
+  max-width: 290px;
+  font-weight: bold;
+  color:#3568d6
+ }
+ .token-wrap{
+  display:flex;
+ }
+ .token-duration{
+  border: 1px solid #9c9c9c;
+  border-radius: 7px;
+  margin:45px auto 4px ;
+  padding:5px 25px ;
+  max-width: 400px;
+  position: relative;
+  display: flex;
+  
+ }
+ .token-duration label{
+  margin-left:3px;
+ 
+ }
+ .token-duration legend{
+   font-size: 1.1em;
+   top:-14px; 
+   background-color: #ffffff; 
+   width:120px;  
+ }
+ .expiry-opts{
+  margin-top:25px;
+  max-width: 80px;
+ }
+ .expiry-opts .hdr{
+   margin-top:5px;
+   margin-bottom: 0px;
+   font-weight: bold;
+ }
+ .epxiry-value{
+  margin:70px 0 0 32px;
+  width:50%;
+  max-width:190px;
+ }
+ .btn-token-submit{
+  margin:30px auto 10px;
+  width:80%;
+  max-width:250px;
+ }
+ .btn-token-submit button{
+  width:100%;
+  height: 35px;
+ }
+ .token-list{
+  width:95%;
+  min-width:250px;
+  margin-top:40px;
+ }
+ .token-list h5{
+  margin:3px auto;
+  width:90%;
+  max-width: 180px;
+  min-width: 160px;
+  font:normal 1.3em Calibri,Arial,"Times New Roman",sans-serif;
+ }
+/***  404 not Found Page ***/
+
+
+/***  Footer ***/
+.footer-position{
+ align-self: end;
+ margin-top:50px;
+}
+.footer-txt-color{
+  color:#f7f7fd
+}
+
+/***  media queries ***/
+ @media screen and (min-width:500px) {
+    .section-login{     
+        margin-top:120px;
+      }
+      .token-duration{
+        margin:45px auto 4px 12px ;
+      }
+      .btn-token-submit{
+        margin-left:30px;        
+       }
+ }
+
+ @media screen and (min-width:750px) {
+    .section-login{
+        margin-top:140px;       
+      }
+ }
+
+ @media screen and (min-width:992px) {
+  .catalogue-pg h3{
+   margin-left: 150px; 
+       
+  }
+}

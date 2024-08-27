@@ -1,0 +1,15 @@
+
+.pager-section{
+    width:90%;
+    max-width:422px ;
+    margin: 10px 0 10px 5px;
+   
+   
+}
+.pager-btn{
+    border: 1px groove #ccc;
+    margin-left:11px;
+    width:40px;
+    border-radius: 5px;
+    font:normal 1.5em "Arial Narrow", sans Serif;
+}

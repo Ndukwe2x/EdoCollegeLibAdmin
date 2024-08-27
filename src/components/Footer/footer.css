@@ -1,0 +1,59 @@
+
+.footer-basic{
+  width:100%;
+  padding:10px;
+  z-index: 150;
+}
+.footer-display{
+    display:flex;
+    flex-direction: column;
+    align-items: center;
+}
+.footer-basic section{
+   margin:5px 0; 
+}
+#craftman{
+    color:#4ab98b
+}
+.section-1 h2{
+    font-size: 0.89em;
+    font-weight: bold;
+}
+section p{
+    font-family: "Open Sans", sans-serif;
+    font-size: 12px;
+}
+@media screen and (min-width:750px) {
+    .footer-display{
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: center;
+    } 
+    section p{
+        margin:10px 5px 2px 3px;
+    }
+    .footer-basic{
+        min-height: 90px;
+      }
+      .section-3 p{
+        margin-right: 40px;
+      }
+      section p{
+         font-size: 14px;
+    }
+      .section-1 h2{
+        font-size: 0.97em;
+        margin:2% 1% 0 12%;
+        min-width: 240px;
+       /*  margin: 7px 0 0 30px; */
+        
+    }
+    
+ }
+ 
+ @media screen and (min-width:1200px) {
+    .section-1 h2{
+        font-size: 1.3em;
+    } 
+
+}

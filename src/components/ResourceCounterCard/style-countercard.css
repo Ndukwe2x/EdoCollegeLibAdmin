@@ -1,0 +1,45 @@
+
+.card-layout{
+    border: 1px solid #557ea5;
+    border-radius: 6px;
+    width:100%;
+    min-width:204px;
+    
+    /* background:#e6fdfc; */
+    height: 100px;
+    box-shadow:rgba(84, 124, 235, 0.34) 0 0 18px 2px;
+    
+}
+.card-container{
+  max-width:260px !important;
+}
+.card-layout h3{
+    margin:2px 1px 3px 12px;
+    width:95%;
+    min-width:210px;
+    color:#576881;
+    font: bold 0.89em  "Arial black", sans-serif;
+}
+.icon-style{
+  padding:4px 3px 4px 10px;
+  background-color: #bfe0d5cc;
+  width:35px;
+  color:#122350;
+  border-radius:90%;  
+}
+.item-count-section{
+ width:80%;
+}
+.resource-count{
+    margin:2px 0 0 15px;
+    font: bold 1.3em  "Arial Bold", sans-serif
+}
+.count-note{
+    width:70%;
+    line-height: 0.7;
+    font:bold 0.6em Verdana, Geneva, sans-serif;
+    margin:0 0 0 25px;
+    color:#7d7e80;
+    top:47px;
+    left:41px;
+}
