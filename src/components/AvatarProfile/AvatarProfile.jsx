@@ -48,7 +48,7 @@ const AvatarProfile = () => {
                     </li>
                     <li>
                         <a className="dropdown-item d-flex align-items-center"
-                            href='users-profile.html'>
+                            href='#'>
                             <i className='bi bi-person'></i>
                             <span>My Profile</span>
                         </a>
@@ -58,7 +58,7 @@ const AvatarProfile = () => {
                     </li>
                     <li>
                         <a className="dropdown-item d-flex align-items-center"
-                            href='users-profile.html'>
+                            href='#'>
                             <i className="bi bi-gear"></i>
                             <span>Account Settings</span>
 

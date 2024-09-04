@@ -1,0 +1,79 @@
+/* .formLoginAdmin{
+    border-radius: 10px;
+    width:95%;
+    max-width:420px;
+    padding:11px 29px;
+    box-shadow:rgba(84, 124, 235, 0.34) 0 0 18px 2px;
+    
+   }
+   h3{
+        width:65%;
+        max-width:101px;
+       font:bold 0.83em ;
+       color:#000000;
+       margin:4px auto 2px;
+   }
+   
+   input[type='text']{
+       margin-bottom:5px;
+   }
+   label{
+       font:bold 0.90em  cambria, Calibri, Times New Roman ;
+       color:#434346e5
+   }
+   
+   .submitBtn{
+       width:99%;
+       height:43px;
+       margin:60px auto 10px;
+      
+   }
+   .token-input{
+     height: 55px !important;
+     font-size: 18px !important
+   }
+   .pswrd-reset{
+     color:#2455dd;
+     cursor: pointer;
+   }
+ */
+
+   
+.formLoginAdmin{
+  border-radius: 10px;
+  width:95%;
+  max-width:420px;
+  padding:11px 29px;
+  box-shadow:rgba(84, 124, 235, 0.34) 0 0 18px 2px;
+  
+ }
+ h3{
+      width:65%;
+      max-width:101px;
+     font:bold 0.83em ;
+     color:#000000;
+     margin:4px auto 2px;
+ }
+ 
+ input[type='text']{
+     margin-bottom:5px;
+ }
+ label{
+     font:bold 0.90em  cambria, Calibri, Times New Roman ;
+     color:#434346e5
+ }
+ 
+ .submitBtn{
+     width:99%;
+     height:43px;
+     margin:60px auto 10px;
+    
+ }
+ .token-input{
+  height: 55px !important;
+  font-size: 18px !important
+}
+ .pswrd-reset{
+   color:#2455dd;
+   cursor: pointer;
+ }

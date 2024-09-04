@@ -12,12 +12,21 @@
 .footer-basic section{
    margin:5px 0; 
 }
+.lnk-sch-web a{
+  text-decoration: none;
+   color:#ffd54a;  
+}
+.lnk-sch-web a:hover{
+   text-shadow: rgba(235, 235, 240, 0.856) 3px 3px 3px
+
+}
 #craftman{
     color:#4ab98b
 }
 .section-1 h2{
     font-size: 0.89em;
     font-weight: bold;
+    cursor: pointer;
 }
 section p{
     font-family: "Open Sans", sans-serif;
@@ -32,6 +41,9 @@ section p{
     section p{
         margin:10px 5px 2px 3px;
     }
+    .lnk-sch-web a{
+       margin-top:22px;
+      }
     .footer-basic{
         min-height: 90px;
       }

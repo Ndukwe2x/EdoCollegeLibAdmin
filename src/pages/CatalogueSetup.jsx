@@ -13,7 +13,12 @@ import PromptModal from '../components/ModalDialogs/PromptModal';
 
 export const loader =async () => {
    await authenticateAdmin("/")
+   try {
     return await catalogueDataLoader();
+   } catch (error) {
+    return null
+   }
+    
 }
 export const action = async ({ request}) => {
     const formData = await request.formData();
@@ -73,7 +78,7 @@ const CatalogueSetup = () => {
            dataRefresh=true
          }
     }
-   
+   console.log("catalogue setup");
     useEffect(()=>{
         if(dataRefresh){
             async function getReloadData(){
@@ -251,7 +256,7 @@ const CatalogueSetup = () => {
                         
                             <div className='catalogue-table  '>
                                 <DataTableViewer columns={catalogueColumns}
-                                 data={catalogueData} enableFilter={false} pageLimit={5} />
+                                 data={catalogueData} enableFilter={false} pageLimit={10} />
                             </div></>)}
                 </div>
                 <Tooltip id="tooltipCancel" style={tooltipStyle} place="bottom" content="cancel edit process" />
@@ -265,7 +270,7 @@ const CatalogueSetup = () => {
            submitHandler={()=>deleteCatalogue(recordId)}/>
 
            <PromptModal show={promptModalShow} bodyText={promptMessage} 
-           onHide={()=>setPromptModalShow(false)} headerText={"System Warning"} S />
+           onHide={()=>setPromptModalShow(false)} headerText={"System Warning"}  />
         </>
     );
 }

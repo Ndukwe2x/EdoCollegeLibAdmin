@@ -1,0 +1,31 @@
+
+.card-wrap{
+    padding:10px;
+    background-color: #f7f9fa;
+    border-radius: 10px;
+    min-height: 70px;
+    max-height: 300px;
+    max-width: 160px;
+    min-width: 120px;
+    margin:24px 13px 4px 15px;
+    border:1px solid #4d4c4c;
+}
+.card-img{
+  width:80%;
+  margin:5px auto;
+}
+.card-img img{
+    width:100%;
+}
+.bookTitle{
+ font:bold 0.94em Arial,"Times New Roman", Helvetica;
+ color:#4d4c4c;
+ white-space: nowrap; 
+ overflow: hidden;
+ text-overflow: ellipsis;
+ width:120px;
+}
+.cardAction{
+    display: flex;
+   justify-content:space-between
+}

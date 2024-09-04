@@ -21,7 +21,7 @@ const SideBar=({})=>{
          <span>Catalogue </span>        
         </Link>     
       </li>
-
+       
      <li className='nav-item'>
        <Link className='nav-link collapsed' 
         data-bs-target="#bookmenu" data-bs-toggle="collapse" href='#'>        
@@ -31,13 +31,13 @@ const SideBar=({})=>{
         <ul id="bookmenu" className="nav-content collapse"
         data-bs-parent="#sidebar-nav">
          <li>
-            <Link href="#" title='upload book to library'>
+            <Link to="addbooks" title='upload book to library'>
             <FontAwesomeIcon icon={faUpload} /> 
               <span className="ms-1">upload book</span>
             </Link>
           </li>
           <li>
-            <Link href="#" title='view books on library'>
+            <Link to="books" title='view books on library'>
             <FontAwesomeIcon icon={faListOl} /> 
               <span className='ms-1'>book list</span>
             </Link>
@@ -53,13 +53,13 @@ const SideBar=({})=>{
         <ul id="videomenu" className="nav-content collapse"
         data-bs-parent="#sidebar-nav">
           <li>
-            <Link href="#">
+            <Link to="addvideos">
             <FontAwesomeIcon icon={faUpload} /> 
              <span className="ms-1">upload video</span>
             </Link>
           </li>
           <li>
-            <Link href="#">
+            <Link to="videos">
             <FontAwesomeIcon icon={faListOl} /> 
               <span className="ms-1">video listing</span>
             </Link>
@@ -67,27 +67,12 @@ const SideBar=({})=>{
         </ul>
      </li>
      <li className='nav-item'>
-       <Link className='nav-link collapsed' data-bs-target="#tokenmenu" 
-       data-bs-toggle="collapse" href='#'  to="token/generator">
+       <Link className='nav-link ' to="token-generator">
          <i className="bi bi-key"></i> 
          <span>Login Token </span>
-         <i className="bi  bi-chevron-down ms-auto"></i>
+        
        </Link>
-        <ul id="tokenmenu" className="nav-content collapse"
-        data-bs-parent="#sidebar-nav">
-          <li>
-            <Link to="token/generator">
-              <i className="bi bi-building-fill-add"></i>
-              <span className='ms-1'>Generate token</span>
-            </Link>
-          </li>
-          <li>
-            <Link href="#">
-            <FontAwesomeIcon icon={faBusinessTime} /> 
-              <span className='ms-1'>manage tokens</span>
-            </Link>
-          </li>
-        </ul>
+      
      </li>
      <li className='nav-item'>
        <Link className='nav-link collapsed' data-bs-target="#studentmenu" 
@@ -99,13 +84,13 @@ const SideBar=({})=>{
         <ul id="studentmenu" className="nav-content collapse"
         data-bs-parent="#sidebar-nav">
           <li>
-            <Link href="#">
+            <Link to="students">
             <FontAwesomeIcon icon={faPersonCircleCheck} /> 
               <span className='ms-1'>Approve student</span>
             </Link>
           </li>
           <li>
-            <Link href="#">
+            <Link to="students">
             <FontAwesomeIcon icon={faListOl} /> 
               <span className='ms-1'>student list</span>
             </Link>

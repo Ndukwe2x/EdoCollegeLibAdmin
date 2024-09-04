@@ -43,3 +43,9 @@
     top:47px;
     left:41px;
 }
+
+@media screen and (min-width:800px) {
+  .count-note{
+   font-size: 0.8em;
+  }
+}

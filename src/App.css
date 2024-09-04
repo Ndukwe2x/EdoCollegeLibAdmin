@@ -116,7 +116,7 @@ a:hover{
   background: #3c3c50;
 }
 .shadow{
-  box-shadow:rgba(84, 124, 235, 0.34) 0 0 18px 2px;
+  box-shadow:rgba(84, 124, 235, 0.34) 0 0 18px 2px; 
 }
 .sub-caption{
   font-weight: normal;
@@ -127,7 +127,7 @@ a:hover{
   width:90%;
   max-width: 230px;
   font: normal 1.4em Arial, Helvetica, sans-serif;
-  margin:50px 0 0 35px;
+  margin:50px auto 10px;
  }
 .page-enclose{
   display:flex;
@@ -229,6 +229,7 @@ a:hover{
  .catalogue-form .textarea{
   height: 120px;
   min-height: 100px;
+  max-height: 140px;
  }
  .catalogue-accordion{
   padding:0;
@@ -255,12 +256,14 @@ a:hover{
    max-width: 550px;
    border-radius: 14px;
    padding:20px;
-   margin:10px auto;
-  
+   margin:10px auto;  
  }
  .gen-btn{
-  height: 43px !important;
-  
+  height: 43px !important;  
+ }
+ .btn-height{
+  height: 42px !important;
+   
  }
  .gen-text{
   height:43px;
@@ -310,16 +313,17 @@ a:hover{
  .btn-token-submit{
   margin:30px auto 10px;
   width:80%;
-  max-width:250px;
- }
+   }
  .btn-token-submit button{
-  width:100%;
-  height: 35px;
+  width:40%;
+  height:35px;
+  margin-left:20px;
  }
  .token-list{
   width:95%;
   min-width:250px;
   margin-top:40px;
+  min-height: 200px;
  }
  .token-list h5{
   margin:3px auto;
@@ -328,8 +332,236 @@ a:hover{
   min-width: 160px;
   font:normal 1.3em Calibri,Arial,"Times New Roman",sans-serif;
  }
-/***  404 not Found Page ***/
+ /*** Add Books Page ***/
+ .add-book-frm{
+    width:96%;
+    min-width:300px; 
+    max-width: 585px;
+    padding:10px 15px;
+    margin:10px auto 20px;
+    border-radius: 10px;
+    box-shadow:rgba(22, 135, 240, 0.534) 0 0 18px 2px;
+ }
+ .addbookHdr{
+   width:90%;
+   max-width:410px;
+   display:flex;
+   justify-content: center;
+   align-items: center;
+   margin:13px auto 5px;
+ }
+ .addbookHdr .iconSize{
+   font-size: 15px;   
+ }
+ .addbookHdr h4{
+    margin-left: 10px;
+ }
+ .add-book-frm label{
+  font-size:0.92em;
+  margin-top:18px;
+  margin-left:19px;
+ }
+ .add-book-frm p{
+  margin-left: 19px;
+ }
+ .add-book-frm input,select{
+   height: 38px ;
+   width:92% !important;
+   margin-left: auto !important;
+   margin-right: auto !important;
+ }
+ .add-book-frm input[type="checkbox"]{
+  height: auto;
+  margin:0 0 0 13px!important;
+  width: auto !important;
+ }
+ .add-book-frm .textarea{
+  height: 120px;
+  min-height: 100px;
+  width: 92%;
+ }
+ .add-book-frm .btn-sctn-addBk{
+   width:90%;
+   margin:20px auto 10px;
+}
+.add-book-pg  .topNav{
+   display: flex;
+   justify-content: space-between;
+   margin:20px auto 10px ;
+   width:90%;
+}
+.topNav button{
+  width:100px;
+  color:#494a50;
+  background-color: #e2e2e2;
+}
+.topNav button:hover{
+  background-color:#305a75 ;
+  color:#fff;
+}
 
+.bookupload-success{
+  width:90%;
+  min-width:280px; 
+  max-width:300px;
+  color:#178057;  
+  margin:5px auto;
+}
+.add-book-pg .bottomNav{
+  display: flex;
+  width:90%;
+  margin: 5px auto 10px;
+  justify-content:end;
+}
+.top-indicator{
+ margin-left:12px;
+ color:#3568d6;
+}
+.bottomNav button{
+  font:bold 0.91em "Verdana", cambaria;
+  color: #28bb8a;
+}
+.bottomNav button:hover{
+   border: 1px solid #1d1e63 !important;
+}
+ .add-book-frm .btnSubmit{
+    width:100%;
+    height:43px;
+    
+ }
+ .spanarea{
+   width:100%;
+   display:block;
+ }
+ .clearForm{
+    margin-left:60px;
+    display: inline-block;
+    margin-top:10px;
+ }
+ .clearForm a , .cancel-edit a{
+  text-decoration: none;
+ }
+ .clearForm a:hover{
+  text-decoration: underline;
+ }
+ .cancel-edit{
+    margin-left: 39px;
+ }
+  .inputControl{
+    border:1px groove #0997f5;
+    height: 39px;
+    width:80%;
+  }
+.prgrss-thumbs{
+   width:100%;
+  max-width:80px;
+  margin:4px auto 0;
+}
+.thumbgen-text{
+  color:#178057;
+  max-width: 260px;
+  min-width:220px;
+  width:95%;
+  margin:2px auto !important;
+  font:normal 1.1em Calibri;
+    
+}
+.thumbnail-result{
+  width:98%;
+  max-width:220px;
+  min-width: 200px;
+  margin:10px auto;
+  border:solid 14px #cad8e2;
+  border-radius: 9px;
+}
+.videoThumbs-caption{
+  width:95%;
+   color:#178057;
+   max-width: 180px;
+   margin:5px auto !important;
+}
+.prgrss-thumbs img{
+  width:100%;
+}
+/*** Book List */
+ .listpg-caption{
+    font:bold 1.6em "Arial Narrow";
+ }
+ .topSearch{
+  width:96%;
+  margin:30px auto 10px;  
+}
+
+.matchcount{
+  width:80%;
+  max-width: 120px;
+  font:bold 0.93em Verdana,cambria, "Times New Roman";
+  margin:0 auto 5px;
+  color:#928f8e;
+}
+
+.searchNav{
+  display:flex;
+  justify-content: start;
+  width:96%;
+  margin: 0 auto;
+}
+.searchNav button{
+  width:80px !important;
+  color:#494a50 !important;
+  background-color: #e2e2e2 !important;
+  height: 40px !important;
+  min-width: 71px;
+}
+.control-search{
+   max-width: 550px;
+   margin-left:10%;
+}
+.searchBox{
+  height:40px !important;
+}
+button.search-btn{
+  height: 40px !important;
+  background-color: #7574aa !important;
+  color:#ffffff !important;
+  width:80px !important;
+  min-width: 60px;
+ 
+}
+/*** Student List Page */
+
+.tab-studentlist{
+  min-width:310px ;
+  margin:10px auto 5px;
+}
+.pgCaption{
+  font:bold 1.5em Arial, 'Arial Narrow';
+  margin:12px auto 5px;
+  width:90%;
+  max-width: 210px;
+}
+.bckbtn{
+  margin-top:30px;  
+}
+.process-indication{
+  width:90%;
+  max-width:320px;
+  min-width: 300px;
+  margin:8px 0 5px 20px;
+}
+.btn-size{
+  min-width: 85px !important;
+}
+.indicator-text{
+  color:#15804a;
+}
+ /*** Error Fall back page Page */
+ 
+
+/***  404 not Found Page ***/
+ .colorTests{
+  color:#f0d90e
+ }
 
 /***  Footer ***/
 .footer-position{
@@ -351,12 +583,47 @@ a:hover{
       .btn-token-submit{
         margin-left:30px;        
        }
+       .add-book-frm label{
+        font-size:1em;
+        }
+        .addbookHdr .iconSize{
+          font-size:20px;   
+        }       
+       
+ }
+ @media screen and (min-width:650px){
+  .searchNav button{
+    width:100px !important;
+    height: 37px !important;
+    min-width: 90px;
+ }
+ button.search-btn{
+  height: 40px !important;
+  width:80px !important;
+  min-width: 60px
+
+}
  }
 
  @media screen and (min-width:750px) {
     .section-login{
         margin-top:140px;       
       }
+      .add-book-frm label{
+        font-size:1.1em;        
+     }
+    .addbookHdr .iconSize{
+      font-size:30px;   
+    }
+  .searchBox{
+     height:50px !important;
+   }
+   button.search-btn{
+      height: 50px !important;
+      width:80px !important;
+      min-width: 60px
+    
+   }
  }
 
  @media screen and (min-width:992px) {

@@ -1,0 +1,42 @@
+.cntnr-main{
+    margin:5px auto 44px;
+    width:95%;
+}
+
+.container-edges{
+    box-shadow: rgba(64, 116, 151, 0.6) 0 0 5px 5px;
+    min-height: 100px;
+    margin:5px auto 5px;
+    border-radius: 10px;
+    padding: 10px 15px;
+    display: flex;
+    justify-content:center;
+    flex-wrap: wrap;
+    
+    
+}
+.loadingValues{
+    width:90%;
+    margin:40px auto;
+    max-width:200px;
+}
+.loadingValues p{
+    font:bold 0.94em Arial," Arial Narrow",Verdana;
+    margin:10px auto;
+    width:50%;
+    max-width: 220px;
+}
+.pager-section{
+    width:90%;
+    max-width:422px ;
+    margin: 10px 0 10px 5px;
+   
+   
+}
+.pager-btn{
+    border: 1px groove #ccc;
+    margin-left:11px;
+    width:40px;
+    border-radius: 5px;
+    font:normal 1.5em "Arial Narrow", sans Serif;
+}

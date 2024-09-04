@@ -1,9 +1,9 @@
+import { authenticateAdmin } from "../auth/authHandler";
 import ResourceCounterCard from "../components/ResourceCounterCard/ResourceCounterCard";
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import { faBook, faFilm, faGraduationCap,faDownload,faEllipsisVertical} from '@fortawesome/free-solid-svg-icons';
 import ZeroBooks from "../components/ZeroBooks/ZeroBooks";
 import DataTableViewer from "../components/DataTableViewer/DataTableViewer";
-import TableActionButton from "../components/TableActionButton/TableActionButton";
 import { libraryResources } from "../data-utils/dataLoaders";
 import { useLoaderData } from "react-router-dom";
 
@@ -13,21 +13,63 @@ const TableTitleViewer=({titleText})=>{
   return <p style={textStyle} title={`${titleText}`}>{titleText}</p>
 }
 
-export const  loadLibraryResources=async()=>{   
-  const academicResources= await libraryResources();
-  return academicResources;
+export const  loader=async()=>{  
+  authenticateAdmin("/");  
+  try {
+    return await libraryResources();
+  } catch (error) {
+    return null;
+  }
+  
 }
 
+const getOneMonthAheadValue=()=>{
+   const currentTime=Date.now();
+   const oneMonthInMilliseconds= 30*60 *60 * 24 * 1000;
+   const oneMonthAhead=currentTime + oneMonthInMilliseconds;
+
+  return oneMonthAhead;
+
+}
 const DashboardMain = () => {
 
     const cardIcon=<FontAwesomeIcon icon={faBook}/>;
     const cardIconVideo=<FontAwesomeIcon icon={faFilm}/>;
     const cardIconAcademic=<FontAwesomeIcon icon={faGraduationCap} />
     
-    const libaryMaterials= useLoaderData();
+    const libraryMaterials= useLoaderData();
+   
+    let books ,videos =[];
+    let userCount= 0 
+    
 
-    const bookCount=0; //get book count
-    const videoCount=0;
+    if(libraryMaterials && libraryMaterials.books)
+      {   books= libraryMaterials.books;
+          books=getResoursesAddedWithinTheMonth(books);
+      }
+    if(libraryMaterials && libraryMaterials.videos)
+     {  
+         videos= libraryMaterials.videos;
+         videos= getResoursesAddedWithinTheMonth(videos);
+     }
+    if(libraryMaterials && libraryMaterials.studentsCount)
+           userCount=libraryMaterials.studentsCount;
+    
+        
+    const bookCount=  books?.length ? books.length: 0;//get book count
+    const videoCount= videos?.length ? videos.length: 0 ;
+
+    function getResoursesAddedWithinTheMonth( resource){         
+         const oneMonthAhead=getOneMonthAheadValue();
+
+         if(resource?.length && resource.length>0)
+            return resource.filter((libMaterial)=>{
+              const dateInMilliseconds= new Date(libMaterial.createdAt);
+             return dateInMilliseconds<=oneMonthAhead
+            });
+         return resource;
+     }
+   
     const bookColumns= [
       {
        header:'Title',
@@ -52,9 +94,7 @@ const DashboardMain = () => {
       cell: (props)=><p>{props.getValue()}</p>
       }
   ];
-   function tableActionClick(){
-
-   }
+   
     const videoColumns=   
         [
           {
@@ -79,13 +119,7 @@ const DashboardMain = () => {
             accessorKey:'downloadable',
             cell: (props)=><p>{props.getValue().toString()}</p>
           }
-          ,
-          {
-            header:'Action(s)',
-            accessorKey:'id',
-            cell:()=><TableActionButton  handleClick={tableActionClick} />
-          }
-         
+                  
       ];
       
     return (
@@ -93,13 +127,13 @@ const DashboardMain = () => {
             <section className="counters-sctn center">
               <div className="row justify-content-center  justify-content-sm-start ">
                 <div className="col-12 col-sm-4 card-container">
-                 <ResourceCounterCard cardTitle={'Books'} resourceCount={5} icon={cardIcon}/>
+                 <ResourceCounterCard cardTitle={'Books'} resourceCount={bookCount} icon={cardIcon}/>
                  </div>
                  <div className="col-12 mt-3 mt-sm-0 ms-sm-5 ms-md-0 col-sm-4 card-container">
-                 <ResourceCounterCard cardTitle={'Videos'} resourceCount={20} icon={cardIconVideo}/>
+                 <ResourceCounterCard cardTitle={'Videos'} resourceCount={videoCount} icon={cardIconVideo}/>
                  </div>
                  <div className="col-12 mt-3 mt-sm-3 col-sm-4 mt-md-0 card-container">
-                  <ResourceCounterCard cardTitle={'Student Accounts'} resourceCount={33}
+                  <ResourceCounterCard cardTitle={'Student Accounts'} resourceCount={userCount}
                    icon={cardIconAcademic}  />
                  </div>                 
                 </div>
@@ -115,7 +149,7 @@ const DashboardMain = () => {
                 <section className="books-recent row justify-content-center justify-content-lg-start">
                       <h3 className="header-title">Recently Added Books</h3>
                       <div className="col-12 col-sm-10 ms-lg-4 mb-4">
-                      {/*    <DataTableViewer columns={bookColumns} data={tableData} pageLimit={1} enableFilter={true} /> */}
+                         <DataTableViewer columns={bookColumns} data={books} pageLimit={1} enableFilter={false} />
                       </div>
                 </section>
                 )
@@ -126,7 +160,7 @@ const DashboardMain = () => {
                       <h3 className="header-title">Recently videos</h3>
 
                       <div className="col-12 col-sm-10 ms-lg-4 mb-4">
-                      {/* <DataTableViewer columns={videoColumns} enableFilter={false} data={recentVideo.videos} pageLimit={1} /> */}
+                      <DataTableViewer columns={videoColumns} enableFilter={false} data={videos} pageLimit={1} />
                       </div>
             </section>
             )

@@ -30,13 +30,13 @@ const TopLinks=()=>{
      
   }
   const handleBookClick=()=>{
-    navigate("books",{replace:true});
+    navigate("addbooks",{replace:true});
   }
   const handleVideoClick=()=>{
-   navigate("videos",{replace:true});
+   navigate("addvideos",{replace:true});
   }
   const handleTokenClick=()=>{
-   navigate("token/generator",{replace:true});
+   navigate("token-generator",{replace:true});
   }
   const tooltipStyle = { backgroundColor: '#381c50' };
    return(

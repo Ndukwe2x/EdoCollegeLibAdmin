@@ -4,11 +4,11 @@ import *  as Yup from 'yup';
 import './login.css'
 import { useState,useEffect,createContext,useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { loginAdmin } from '../../auth/authHandler';
+import { loginUser } from '../../auth/authHandler';
 import { useAuth} from '../../auth/AuthContext'
 
 
-const AdminLogin = () => {
+const Login = () => {
   const [submitStatus, setSubmitStatus] = useState("idle");
   const [loginError, setLoginError] = useState(false);
   const [loginResponse,setLoginResponse]=useState(null);
@@ -24,7 +24,7 @@ const AdminLogin = () => {
          setLoginError(false)
          localStorage.setItem("credentials",JSON.stringify(loginResponse.data));
          setAuthenticatedUser(loginResponse); //set credentials on global context        
-         navigate('/dashboard',{replace:true}); //move to admin dashboard authenticated.
+         navigate('/dashboard',{replace:true}); //move into library.
        }else
        localStorage.removeItem("credentials");
    },[loginResponse])
@@ -32,14 +32,14 @@ const AdminLogin = () => {
 
   const loginSubmit = async (values) => {
 
-  const { email: userEmail, password: adminpass } = values;
+  const { username: username, tokenPass: token } = values;
 
   setSubmitStatus("submitting");   
     try {
          
-         const response = await loginAdmin(userEmail,adminpass);
+         const response = await loginUser(username,token);
          setLoginResponse(response);       
-         values.email = ''; values.password = ''; //clear form after submit
+         values.username = ''; values.token = ''; //clear form after submit
     } 
     catch (error)
     {
@@ -60,20 +60,18 @@ const AdminLogin = () => {
   
   return (
     <div className='formLoginAdmin center'>
-      <h3>Admin</h3>
+      <h3>Student</h3>
       <Formik initialValues={
         {
-          email: '',
-          password: ''
+          username: '',
+          token: ''
         }
       }
         validationSchema={Yup.object({
-          email: Yup.string().required('* required')
-            .matches(/^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/,
-              { message: 'Invalid email address', excludeEmptyString: true })
-            .max(60, "must not be longer than 60 characters")
+          username: Yup.string().required('* required')
+           
           ,
-          password: Yup.string().required('* required')
+          token: Yup.string().required('* required')
             .min(6, "must not be less than 6 characters")
 
         })}
@@ -82,18 +80,18 @@ const AdminLogin = () => {
         {
 
           formik => (<form onSubmit={formik.handleSubmit}  >
-            {loginError && <p className='errTxt'>Wrong email or password</p>}
-            <label htmlFor='email'>Email</label>
-            <input className='form-control' id='email' name="email" maxLength={60} 
+            {loginError && <p className='errTxt'>Wrong UserName or token</p>}
+            <label htmlFor='username'>UserName</label>
+            <input className='form-control' id='username' name="username" maxLength={60} 
               disabled={submitStatus=="submitting"}
-              type='email' placeholder='Enter your email' {...formik.getFieldProps('email')} />
-            {formik.touched && formik.errors.email ? (<p className='errTxt'>{formik.errors.email}</p>) : null}
+              type='text' placeholder='Enter your username' {...formik.getFieldProps('username')} />
+            {formik.touched && formik.errors.username ? (<p className='errTxt'>{formik.errors.username}</p>) : null}
             
-            <label htmlFor='pasword'>Password</label>
-            <input className='form-control' id='password' name='password' maxLength={30} 
+            <label htmlFor='token'>Token</label>
+            <input className='form-control token-input' id='token' name='token' maxLength={12} 
             disabled={submitStatus=="submitting" }
-              type='password' placeholder='Password' {...formik.getFieldProps('password')} />
-            {formik.touched && formik.errors.password ? (<p className='errTxt'>{formik.errors.password}</p>) : null}
+              type='password' placeholder='Token' {...formik.getFieldProps('token')} />
+            {formik.touched && formik.errors.token ? (<p className='errTxt'>{formik.errors.token}</p>) : null}
             
             <button type='submit' className='btn btn-primary submitBtn clearfix'
               disabled={submitStatus=="submitting"}
@@ -105,14 +103,15 @@ const AdminLogin = () => {
               )}
 
             </button>
-            <Tooltip  id="tooltipsubmit" style={tooltipStyle} place="bottom" content="login to admin" />
+            <Tooltip  id="tooltipsubmit" style={tooltipStyle} place="bottom" content="login to library" />
           </form>)
         }
       </Formik>
-      <p className='pswrd-reset'><a data-tooltip-id="tooltipresetpassword">Forgot Password?</a></p>
-      <Tooltip id="tooltipresetpassword" style={tooltipStyle} place="bottom" content="reset password" />
+      <p className='pswrd-reset'><a data-tooltip-id="tooltipresetpassword">create student/user account?</a></p>
+      <Tooltip id="tooltipresetpassword" style={tooltipStyle} place="bottom" content="create account/sign up" />
     </div>
+
   )
 
 }
-export default AdminLogin
+export default Login

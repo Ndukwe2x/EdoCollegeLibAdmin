@@ -69,12 +69,75 @@ export const adminAccountsLoader=async()=>{
    }
 
 }
-export const libraryResources =()=>{
-  return null;
+export const libraryResources =async()=>{
+  
+   const  resources={};
+   try {
+    
+    const libraryBooks= await libraryResourcesBooks();
+     if(libraryBooks)
+     { const {data:{data:{books:books}}}=libraryBooks;
+       resources.books=books;  
+     }
+
+    const libraryVideos= await libraryResourcesVideos();
+    if(libraryVideos)
+     { 
+      const {data:{data:{videos:videos}}}=libraryVideos;
+      resources.videos=videos;
+     }
+    
+    const studentList= await libraryStudentAccounts();
+     if(studentList)
+    {  const {data:{data:{nbHits:studentCount}}}=studentList;
+       resources.studentsCount= studentCount;
+    }
+     return resources;
+
+   } catch (err) {
+     const{response}=err;
+     console.log(err);
+     throw response;
+   }
+
+  
 }
 export const libraryResourcesBooks=async()=>{
-  return null
+  const loggedInCred= JSON.parse(localStorage.getItem("credentials"));
+  const  authHeader={headers:{"Content-Type": "application/json",
+          "Authorization":`Bearer ${loggedInCred.token}`}};
+      try{
+          const response= await api.get("admin/books",authHeader);
+          
+        return response;          
+       }
+       catch(err){
+         throw err;
+       }
 }
 export const libraryResourcesVideos=async()=>{
-  return null;
+  const loggedInCred= JSON.parse(localStorage.getItem("credentials"));
+  const  authHeader={headers:{"Content-Type": "application/json",
+          "Authorization":`Bearer ${loggedInCred.token}`}};
+      try{
+          const response= await api.get("admin/videos",authHeader);
+          return response;          
+       }
+       catch(err){
+         throw err;
+       }
+}
+
+export const libraryStudentAccounts=async()=>{
+  const loggedInCred= JSON.parse(localStorage.getItem("credentials"));
+  const  authHeader={headers:{"Content-Type": "application/json",
+          "Authorization":`Bearer ${loggedInCred.token}`}};
+      try{
+          const response= await api.get("admin/student",authHeader);
+          
+          return response;          
+       }
+       catch(err){
+         throw err;
+       }
 }
