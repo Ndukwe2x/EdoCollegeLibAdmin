@@ -48,7 +48,7 @@ export const loader = () => {
      setModalShow(true);
      
    }
-
+   
    useEffect(()=>{
     if(startDelete){
        setSumbitting(true);
@@ -56,9 +56,13 @@ export const loader = () => {
         const performDelete=async()=>{
             try {
 
-              console.log("About to delete...")
-              const deleteResponse= await deleteBook(recordId);
-              console.log("top level delete", deleteResponse);
+               const deleteResponse= await deleteBook(recordId); 
+                
+              if(deleteResponse.status==200){
+                  const currentBookInLibrary= await libraryResourcesBooks();
+                  const { data: { data: { books: newbookList } } } =currentBookInLibrary;
+                  setLibraryBooks(newbookList)
+              }          
 
             } catch (error) {
               console.log(error)
@@ -71,6 +75,7 @@ export const loader = () => {
     }
 
    },[startDelete]);
+   console.log("books",libraryBooks )
 
   const goBackToPreviousPage=()=>{
 

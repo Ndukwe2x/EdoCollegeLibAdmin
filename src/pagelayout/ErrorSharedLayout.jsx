@@ -1,27 +1,19 @@
 
-import TopBar from "../components/TopBar/TopBar";
-import SideBar from "../components/SideBar/SideBar";
-import TopLinks from "../components/TopLinks/TopLinks";
-import Footer from "../components/Footer/Footer";
+
+import serverError from '../assets/ServerError5003.gif'
 
 const ErrorSharedLayout=()=>{    
     
    return(
-    <div className="page-enclose relative">
-    <TopBar showSideMenu={true} showAvatar={true} />
-    <div className="dashboard-home">
-      <SideBar />
-      <div id="main" >
-        <div className="container-fluid">
-          <TopLinks  />
-            <main>
-                <p>Error component</p>
+    
+            <main className="err-page relative">
+                <h2 className="Errorheader absolute">Oops! Internal Server Error</h2>
+                <p className="smllerrtext absolute">Web page encountered and error..</p>
+                <div className="err-msgcontnt">                   
+                  <img src={ serverError} alt />
+                </div>
             </main>
-        </div>
-      </div>
-    </div>
-    <Footer />
-  </div>
+     
    )
 
 }

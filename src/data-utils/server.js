@@ -54,9 +54,9 @@ export const deleteBook=async(bookId)=>{
         }
     };
     try {
-        console.log("Trying to delete... inside sub section");
+       
         const response = await uploadApi.delete(`admin/books/${bookId}`, authHeader);
-        console.log("delete try:",response);
+        
         return response;
     }
     catch (err) {

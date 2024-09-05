@@ -8,7 +8,7 @@ const BookCard=({bookData,bookDelete,bookEdit})=>{
     return(
         <div className='card-wrap'>
           <div className='card-img'>
-            <img  src={defaultBookCover}    />
+            <img  src={ bookData?.coverUrl && bookData.coverUrl!=""? bookData.coverUrl:defaultBookCover}    />
           </div>
           <div>
             <div className='cardAction'>

@@ -556,9 +556,30 @@ button.search-btn{
   color:#15804a;
 }
  /*** Error Fall back page Page */
- 
-
-/***  404 not Found Page ***/
+ .err-page{
+  width:100%; 
+  }
+.err-msgcontnt{
+  width:98%;
+  min-width:300px;
+  max-width: 550px;
+  margin:0 auto; 
+  }
+ .err-msgcontnt img{
+  width:100%;
+ }
+ .Errorheader{
+     top:3%;
+     left:20%;
+     width:98%;
+     min-width: 130px;
+     max-width: 380px;
+ } 
+ .smllerrtext{
+  top:12%;
+  left:30%;
+ }
+  /***  404 not Found Page ***/
  .colorTests{
   color:#f0d90e
  }
