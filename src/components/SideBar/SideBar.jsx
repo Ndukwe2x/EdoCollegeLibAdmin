@@ -1,7 +1,7 @@
 import   './style-sidebar.css';
 import {Link} from 'react-router-dom';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
-import { faAdd, faBook,  faBusinessTime,  faFilm, faGraduationCap,
+import { faAdd, faBook,  faBusinessTime,  faDownload,  faFilm, faGraduationCap,
    faListOl, faPersonCircleCheck, faScrewdriverWrench, faUpload, faUserTie} from '@fortawesome/free-solid-svg-icons';
 
 const SideBar=({})=>{
@@ -116,6 +116,12 @@ const SideBar=({})=>{
                    
         </ul>
      </li>
+     <li className='nav-item'>       
+      <Link className='nav-link'  to="http://libgen.rs/" target='_blank' >
+         <FontAwesomeIcon icon={faDownload} /> 
+         <span className='ms-1'>Book Downloads</span>        
+        </Link>     
+      </li>
    </ul>
   </aside>
 ) ; 
