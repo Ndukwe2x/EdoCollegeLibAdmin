@@ -4,8 +4,8 @@ const serverBaseUrl= 'https://edocollegelibraryapp-b13a4881c9f9.herokuapp.com/ap
 const baseUrl='http://localhost:3000/api/v1';
 
 export default axios.create({
-    baseURL:serverBaseUrl, 
-    timeout:20000,
+    baseURL:serverBaseUrl, //change before upload
+    timeout:7200000,// timeout:20000,
     timeoutErrorMessage:"process timed out, try again later"
    });
 

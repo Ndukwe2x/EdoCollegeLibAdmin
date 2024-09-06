@@ -74,8 +74,8 @@ const TokenGenerator=()=>{
     async function tokenReload(){
         try {
             
-            setListRefreshing(true);
-            const newTokenList= await accessTokensLoader(); 
+             setListRefreshing(true);
+             const newTokenList= await accessTokensLoader(); 
              setRenderedTokenList(newTokenList);
              
         } catch (error) {
@@ -99,6 +99,7 @@ const TokenGenerator=()=>{
                 const expiryoptions=formData.expiryopt;
                 const expirytime=formData.expirytime;
                 const expirationTime=getTokenExpiryDate(expirytime,expiryoptions);  
+               
                 const  response = await createToken(token,expirationTime);
                  if (response?.status == 201 || response?.status == 200 )
                     { 
@@ -112,6 +113,8 @@ const TokenGenerator=()=>{
              } catch (err) {
                 console.log("Error creating token",err);
                 return err;
+            }finally{
+                setStartSubmit(false)
             }
          }
          

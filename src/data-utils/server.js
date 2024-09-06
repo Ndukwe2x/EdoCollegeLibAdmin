@@ -73,8 +73,8 @@ export const deleteVideo=async(videoId)=>{
         }
     };
     try {
-        const response = await api.delete(`admin/videos/${videoId}`, authHeader);
-        console.log( "delevideos",response);
+        const response = await uploadApi.delete(`admin/videos/${videoId}`, authHeader);
+       
         return response;
     }
     catch (err) {

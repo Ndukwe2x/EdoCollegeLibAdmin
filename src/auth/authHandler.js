@@ -1,5 +1,5 @@
 import {redirect} from  'react-router-dom';
-import api from "../api/axiosConfig"
+import api, { uploadApi } from "../api/axiosConfig"
 
 export const authenticateAdmin= async (loginPath)=>{
    
@@ -9,9 +9,8 @@ export const authenticateAdmin= async (loginPath)=>{
 
     try{
       
-        loginStatus= await api.get("loginAuth",
-        {headers:{"Content-Type": "application/json",
-        "Authorization":`Bearer ${loggedInCred.token}`}
+        loginStatus= await uploadApi.get("loginAuth",
+          {headers:{"Content-Type": "application/json","Authorization":`Bearer ${loggedInCred.token}`}
        })
        const {data:authResponse}=loginStatus; 
             
@@ -30,7 +29,9 @@ export const authenticateAdmin= async (loginPath)=>{
 export const loginAdmin= async(userEmail,adminPass)=>{
 
     try {
-      return await api.post("login/admin",{email:userEmail,password:adminPass})
+    
+     return await uploadApi.post("/login/admin",{email:userEmail,password:adminPass});      
+
     } catch (error) {
         throw error;
     }

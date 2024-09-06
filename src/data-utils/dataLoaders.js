@@ -1,4 +1,6 @@
-import api from '../api/axiosConfig';
+import api, { uploadApi } from '../api/axiosConfig';
+import { UTCDateToDateTimeString } from '../code-utility/utilityFunctions';
+
 
 export const catalogueDataLoader=async()=>{
   
@@ -6,7 +8,7 @@ export const catalogueDataLoader=async()=>{
   const  authHeader={headers:{"Content-Type": "application/json",
           "Authorization":`Bearer ${loggedInCred.token}`}};
       try{
-          const response= await api.get("admin/catalogue",authHeader);
+          const response= await uploadApi.get("admin/catalogue",authHeader);
          return response;          
        }
        catch(err){
@@ -19,7 +21,7 @@ export const accessTokensLoader= async()=>{
   const  authHeader={headers:{"Content-Type": "application/json",
           "Authorization":`Bearer ${loggedInCred.token}`}};
       try{
-          let response= await api.get("admin/token",authHeader);
+          let response= await uploadApi.get("admin/token",authHeader);
           const accounts= await adminAccountsLoader();
           if(!response)
              return;
@@ -34,6 +36,7 @@ export const accessTokensLoader= async()=>{
                const adminAccount= adminList.find(acct=>acct.id==tokenRecord.createdBy);
               if(adminAccount)
                {
+                
                  tokenRecordObject._id=tokenRecord._id;
                  tokenRecordObject.maskedToken=tokenRecord.maskedToken;
                  tokenRecordObject.createdAt=tokenRecord.createdAt;                 
@@ -61,7 +64,7 @@ export const adminAccountsLoader=async()=>{
           "Authorization":`Bearer ${loggedInCred.token}`}};
 
    try {
-     const response= await api.get("admin/accounts",authHeader);
+     const response= await uploadApi.get("admin/accounts",authHeader);
      if(response)
         return response;
    } catch (err) {
@@ -107,7 +110,7 @@ export const libraryResourcesBooks=async()=>{
   const  authHeader={headers:{"Content-Type": "application/json",
           "Authorization":`Bearer ${loggedInCred.token}`}};
       try{
-          const response= await api.get("admin/books",authHeader);
+          const response= await uploadApi.get("admin/books",authHeader);
           
         return response;          
        }
@@ -120,7 +123,7 @@ export const libraryResourcesVideos=async()=>{
   const  authHeader={headers:{"Content-Type": "application/json",
           "Authorization":`Bearer ${loggedInCred.token}`}};
       try{
-          const response= await api.get("admin/videos",authHeader);
+          const response= await uploadApi.get("admin/videos",authHeader);
           return response;          
        }
        catch(err){
@@ -133,7 +136,7 @@ export const libraryStudentAccounts=async()=>{
   const  authHeader={headers:{"Content-Type": "application/json",
           "Authorization":`Bearer ${loggedInCred.token}`}};
       try{
-          const response= await api.get("admin/student",authHeader);
+          const response= await uploadApi.get("admin/student",authHeader);
           
           return response;          
        }

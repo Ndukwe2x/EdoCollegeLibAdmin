@@ -1,7 +1,7 @@
 export function UTCDateToDateTimeString(UTCDate){
    
     const year= UTCDate.getFullYear();
-    const month=UTCDate.getMonth();
+    const month=UTCDate.getMonth() + 1;
     const day= UTCDate.getDate();
     let hours= UTCDate.getHours();
     let minutes=UTCDate.getMinutes();  
