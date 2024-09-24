@@ -2,14 +2,16 @@ import { authenticateAdmin } from "../auth/authHandler";
 import { accessTokensLoader } from "../data-utils/dataLoaders";
 import { Tooltip } from 'react-tooltip';
 import randomToken from 'random-token';
-import { useLoaderData,useNavigate,useSearchParams } from "react-router-dom";
-import { useEffect, useState } from "react";
+import { Await, defer, useLoaderData,useNavigate,useSearchParams } from "react-router-dom";
+import { Suspense, useEffect, useState } from "react";
 import DataTableViewer from "../components/DataTableViewer/DataTableViewer";
 import TableActionButton from "../components/TableActionButton/TableActionButton";
 import { UTCDateToDateTimeString } from "../code-utility/utilityFunctions";
 import DeleteModal from '../components/ModalDialogs/DeleteModal';
 import { createToken, deleteToken } from "../data-utils/server";
 import PromptModal from "../components/ModalDialogs/PromptModal";
+import SectionLoader from "../components/SectionLoader/SectionLoader";
+
 
 
 
@@ -17,7 +19,7 @@ import PromptModal from "../components/ModalDialogs/PromptModal";
 export const loader = async() => {
     authenticateAdmin("/");    
     try{
-        return await accessTokensLoader();    
+        return defer({tokenList: accessTokensLoader()});    
        }
        catch(error){
           return null;
@@ -26,36 +28,37 @@ export const loader = async() => {
 const getTokenExpiryDate=(expiryTime,expiryOption)=>{
       const currentTime=Date.now();
       let addedMilliseconds=0;
-     
+          
      switch(expiryOption)
      {
         case "minutes":
-           addedMilliseconds=60*expiryTime *1000 ;
+           addedMilliseconds= 60 * expiryTime * 1000 ;
             break;
         case "hours":
-            addedMilliseconds=  60 * 60 *expiryTime *1000 ;
+            addedMilliseconds=  60 * 60 * expiryTime * 1000 ;
             break;
         case "days":
-             addedMilliseconds= 60 *60 *24 *expiryTime* 1000;
+             addedMilliseconds= 60 * 60 * 24 *expiryTime * 1000;
             break;   
         case "months":
-            addedMilliseconds= 30*60 *60 * 24 *expiryTime* 1000;
+            addedMilliseconds= 30 * 60 * 60 * 24 * expiryTime * 1000;
              break; 
      }
      const addedTimeMilliseconds= currentTime + addedMilliseconds;
      const addTimeDate= new Date(addedTimeMilliseconds);
+     
 
     return addTimeDate;
 }
 
 const TokenGenerator=()=>{
    
-    const tokenList=useLoaderData();
+    const tokenListPromise=useLoaderData();
    
-    const [listRefreshing,setListRefreshing]=useState(false);
     const [formData,setFormData]=useState({token:"",expiryopt:"",expirytime:""})
     const [modalShow, setModalShow] = useState(false);
-    const [renderedTokenList,setRenderedTokenList]=useState(tokenList);
+    const [renderedTokenList,setRenderedTokenList]=useState([]);
+    const [firstTimeRender,setFirstTimeRender]=useState(true);
     const [submittError,setSubmitError]=useState(false);
     const tableRecordStyle={font:'normal 0.92em Calibri',margin:'0'};
     const tooltipStyle = {backgroundColor: '#605286' };
@@ -73,8 +76,7 @@ const TokenGenerator=()=>{
 
     async function tokenReload(){
         try {
-            
-             setListRefreshing(true);
+                     
              const newTokenList= await accessTokensLoader(); 
              setRenderedTokenList(newTokenList);
              
@@ -85,20 +87,20 @@ const TokenGenerator=()=>{
           
         }finally{  
             clearForm()
-            setListRefreshing(false);
+            
         }             
       }
      
      useEffect(()=>{
 
      if(startSubmit){
-
+        setFirstTimeRender(false);
          async function  tokenSubmission(){
             try {      
                 const token= formData.token;
                 const expiryoptions=formData.expiryopt;
                 const expirytime=formData.expirytime;
-                const expirationTime=getTokenExpiryDate(expirytime,expiryoptions);  
+                const expirationTime=getTokenExpiryDate(expirytime,expiryoptions);                 
                
                 const  response = await createToken(token,expirationTime);
                  if (response?.status == 201 || response?.status == 200 )
@@ -119,7 +121,7 @@ const TokenGenerator=()=>{
          }
          
         tokenSubmission();  
-         setStartSubmit(false) ;        
+        setStartSubmit(false) ;        
       }
      
     },[startSubmit])
@@ -127,16 +129,15 @@ const TokenGenerator=()=>{
     useEffect(()=>{
         
        if(confirmDelete){
-
+         setFirstTimeRender(false);
          async function makeDeleteHapen(token_id){      
           try {
-             const deleteResponse= await deleteToken(token_id)
+             const deleteResponse= await deleteToken(token_id);
              if(deleteResponse.status==200)
              {
                 setPromptHeader("Successful");
                 setPromptMessage("Token was deleted successfully");
                 setPromptModalShow(true);                
-                setListRefreshing(true);
                 await tokenReload();
                
              }
@@ -161,8 +162,7 @@ const TokenGenerator=()=>{
            } 
           }
         finally{
-            setListRefreshing(false); 
-            setConfirmDelete(false);
+             setConfirmDelete(false);
         }
       }
         makeDeleteHapen(recordId);
@@ -171,6 +171,7 @@ const TokenGenerator=()=>{
     
     },[confirmDelete]);
 
+    
     const handleTokenSubmit=(event)=>{
         event.preventDefault();
         if(formData.token==""|| formData.expirytime=="" || formData.expiryopt=="")
@@ -187,6 +188,10 @@ const TokenGenerator=()=>{
         setSubmitError(false);
         setFormData(prevFormData=>({...prevFormData,token:newTOken}));
        
+    }
+    const goToPreviousPage=()=>{
+
+      navigate(-1);
     }
     const handleChange=(event)=>{
         const {name,value,type}=event.target;
@@ -227,7 +232,7 @@ const TokenGenerator=()=>{
         {
             header: 'Created On',
             accessorKey: 'createdAt',
-            cell: ({ getValue }) => <p style={tableRecordStyle}>{UTCDateToDateTimeString(new Date(getValue())) }</p>
+            cell: ({ getValue }) => <p style={tableRecordStyle}>{ UTCDateToDateTimeString(new Date(getValue())) }</p>
         },
         {  
             header:'Action(s)',
@@ -240,7 +245,10 @@ const TokenGenerator=()=>{
 
     return (
              <div className="token-gen-container">
-                 <h3 className="page-caption">Login Access Token Generator</h3>
+              <div className="topnav-keygen">
+                <button className="btn " onClick={goToPreviousPage}
+                data-tooltip-id="tooltipBackButton"><i className="bi bi-chevron-left"></i> Back</button>
+                <h3 className="page-caption">Login Access Token Generator</h3></div>                 
                  <div className="gen-panel shadow">
                     <form  onSubmit={handleTokenSubmit}>
                       <div className="token-section">
@@ -298,25 +306,30 @@ const TokenGenerator=()=>{
                   </form>
                  </div>
                  <div className="token-list">
-                 {
-                    listRefreshing ? <p className="loading ce">Fetching token list...</p>:(
-                     <>
-                       <h5>Access token list</h5>
-                      { <DataTableViewer  columns={tokenListColumns} pageLimit={20} 
-                       data={renderedTokenList} enableFilter={false} />}
-                     </>
-                    )
-                    }
+                  <h5>Access token list</h5>
+                  <Suspense fallback={<SectionLoader sectionName={"token list table"}/>}>
+                     { firstTimeRender ?(
+                        <Await resolve={tokenListPromise.tokenList}>
+                        {
+                          (tokenList)=>(<DataTableViewer  columns={tokenListColumns} pageLimit={20} 
+                          data={tokenList} enableFilter={false} />)
+
+                        }                      
+                       </Await>):( <DataTableViewer  columns={tokenListColumns} pageLimit={20} 
+                          data={renderedTokenList} enableFilter={false} />)                      
+                      }
+                  </Suspense>
+                  
                  </div>
-                 < DeleteModal  show={modalShow}
-             bodyText={`  Are you sure, you want to delete token from token list?`}
-             onHide={() => setModalShow(false)} headerText={"Token Deletion"}
-           submitHandler={handleTokenDelete}/>
+                 < DeleteModal  show={modalShow} bodyText={`  Are you sure, you want to delete token from token list?`}
+                   onHide={() => setModalShow(false)} headerText={"Token Deletion"}
+                 submitHandler={handleTokenDelete}/>
            
            <PromptModal show={promptModalShow} bodyText={promptMessage} 
            onHide={()=>setPromptModalShow(false)} headerText={promptHeader} mode={promptMode} />
            
             <Tooltip id="tooltipSubmit" style={tooltipStyle} place="bottom" content="Submit generated token" />
+            <Tooltip id="tooltipBackButton" style={tooltipStyle} place="bottom" content="back to previous page" />
              </div>
       )
     

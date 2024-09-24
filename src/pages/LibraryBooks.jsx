@@ -1,21 +1,23 @@
-import { useEffect, useState, useTransition } from "react";
+import { Suspense, useEffect, useState, useTransition } from "react";
 import {authenticateAdmin } from "../auth/authHandler";
 import CardContainer from "../components/CardContainer/CardContainer";
 import { libraryResourcesBooks } from "../data-utils/dataLoaders";
 import TableActionButton from "../components/TableActionButton/TableActionButton";
 import DataTableViewer from "../components/DataTableViewer/DataTableViewer";
-import { useLoaderData } from "react-router-dom";
+import { Await, defer, useLoaderData, useNavigate } from "react-router-dom";
 import DeleteModal from "../components/ModalDialogs/DeleteModal";
 import { FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import { faMagnifyingGlass } from "@fortawesome/free-solid-svg-icons";
 import { deleteBook } from "../data-utils/server";
+import SectionLoader from "../components/SectionLoader/SectionLoader";
+import { Tooltip } from "react-tooltip";
 
 
 
 export const loader = () => {
      authenticateAdmin("/")
      try{
-      return libraryResourcesBooks()    
+      return defer({bookList:libraryResourcesBooks() })   
      }
      catch(error){
         return null;
@@ -24,10 +26,9 @@ export const loader = () => {
  }
 
  const LibraryBooks=()=>{
-   const loadedlibraryBooks = useLoaderData()
-   const { data: { data: { books: bookList } } }=loadedlibraryBooks
-   const  [libraryBooks, setLibraryBooks]=useState(bookList);
-   const tableRecordStyle={font:'normal 0.92em Calibri',margin:'0'};
+   const loadedlibraryBooksPromise = useLoaderData()
+   const [libraryBooks, setLibraryBooks]=useState([]);
+   const [searchResult, setSearchResult]=useState([]);
    const [submitting,setSumbitting]=useState(false);
    const [modalShow, setModalShow] = useState(false);
    const [headerText, setHeaderText]=useState("");
@@ -36,8 +37,13 @@ export const loader = () => {
    const [startDelete,setStartDelete]=useState(false);
    const [searchTerm,setSearchTerm]=useState("");
    const [isPending, startTransition]= useTransition();
+   const [firstInstanceRender,setFirstInstanceRender]=useState(true);
+   const navigate= useNavigate();
 
-   function handleEdit(bookId){
+  const tableRecordStyle={font:'normal 0.92em Calibri',margin:'0'};
+  const tooltipStyle = {backgroundColor: '#605286' };
+   
+  function handleEdit(bookId){
         
 
    }
@@ -49,6 +55,21 @@ export const loader = () => {
      
    }
    
+   useEffect(()=>{
+  
+    if(firstInstanceRender){
+      libraryResourcesBooks()
+      .then(response=>{
+      const { data: { data: { books: bookList } } }=response;
+      setLibraryBooks(bookList);  
+      setSearchResult(bookList);
+      })
+    .catch(error=>console.log(error))
+    .finally(()=>setFirstInstanceRender(false))   
+    }  
+
+  },[]);
+
    useEffect(()=>{
     if(startDelete){
        setSumbitting(true);
@@ -75,10 +96,11 @@ export const loader = () => {
     }
 
    },[startDelete]);
-   console.log("books",libraryBooks )
+  
+
 
   const goBackToPreviousPage=()=>{
-
+   navigate(-1);
   }
    const deleteSelectedBook=()=>{
      setModalShow(false);
@@ -87,9 +109,9 @@ export const loader = () => {
 
   const handleSearch=(event)=>{
        const {value}=event.target;
-        setSearchTerm(value);
+       setSearchTerm(value);
        startTransition(()=>{
-           setLibraryBooks( bookList.filter(book=>book.title.toLocaleLowerCase().includes(value.toLocaleLowerCase()))) ;
+           setLibraryBooks(searchResult.filter(book=>book.title.toLocaleLowerCase().includes(value.toLocaleLowerCase()))) ;
        })
        
   } 
@@ -124,9 +146,12 @@ export const loader = () => {
    return (
      <div>
         <div className="topSearch">
-          <p className="matchcount">{bookList.length !== libraryBooks.length ? `${libraryBooks.length} macthes`:null}</p>
+          <p className="matchcount">
+            {searchResult.length !== libraryBooks.length ? `${libraryBooks.length} macthes`:null}
+          </p>
           <div className="searchNav"> 
-           <button className="btn " onClick={goBackToPreviousPage}> <i className="bi bi-chevron-left"></i> Back</button>
+           <button className="btn topnav-booklist" data-tooltip-id="tooltipBackButton"
+            onClick={goBackToPreviousPage}> <i className="bi bi-chevron-left"></i> Back</button>
             <div className="input-group control-search"> 
              <input type="text" className="form-control searchBox" placeholder="Search"
             onChange={handleSearch} value={searchTerm} name="txtSearch" />
@@ -137,17 +162,44 @@ export const loader = () => {
            <h2 className="page-caption listpg-caption ">Book List</h2>
         </div>
        <div   disabled={submitting}>
-      <CardContainer cardType={"books"}  cardData={libraryBooks} pageLimit={20} handleDelete={handleDelete} 
-       handleEdit={handleEdit} loading={isPending} />
+        <Suspense fallback={<SectionLoader sectionName={"Books card list"} />}>
+          {firstInstanceRender?(
+           <Await resolve={loadedlibraryBooksPromise.bookList}>
+              {
+                 (bookResource)=>{
+                  const { data: { data: { books: booksCollection } } }=bookResource;
+                 return <CardContainer cardType={"books"}  cardData={booksCollection} pageLimit={20} handleDelete={handleDelete} 
+                handleEdit={handleEdit} loading={isPending} />
+                 }
+              }
+          </Await>):( <CardContainer cardType={"books"}  cardData={libraryBooks} pageLimit={20} handleDelete={handleDelete} 
+       handleEdit={handleEdit} loading={isPending} />)
+          }
+        </Suspense>
+     
       </div>
        <div className="table-sectn" disabled={submitting}>
-          <DataTableViewer columns={bookListColumns} data={libraryBooks}
-           enableFilter={true} pageLimit={25} />
+       <Suspense fallback={<SectionLoader sectionName={"Books list"} />}>
+          {firstInstanceRender?(
+           <Await resolve={loadedlibraryBooksPromise.bookList}>
+              {
+                 (bookResource)=>{
+                  const { data: { data: { books:booksCollection } } }=bookResource;
+                 return <DataTableViewer columns={bookListColumns} data={booksCollection}
+                 enableFilter={true} pageLimit={25} />
+                 }
+              }
+          </Await>):( <DataTableViewer columns={bookListColumns} data={libraryBooks}
+           enableFilter={true} pageLimit={25} />)
+          }
+        </Suspense>
+       
        </div>
        < DeleteModal  show={modalShow}
            bodyText={modalBody}
            onHide={() => setModalShow(false)} headerText={headerText}
-           submitHandler={()=>deleteSelectedBook()}/>
+           submitHandler={()=>deleteSelectedBook()}/>           
+           <Tooltip id="tooltipBackButton" style={tooltipStyle} place="bottom" content="back to previous page" />
      </div>
    )
    

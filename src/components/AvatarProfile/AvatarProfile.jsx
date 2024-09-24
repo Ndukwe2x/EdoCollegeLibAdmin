@@ -1,18 +1,27 @@
 
 import { useAuth } from "../../auth/AuthContext"; 
-import { useNavigate } from "react-router-dom";
+import { useNavigate} from "react-router-dom";
 
 import './avatar-style.css';
 const profileImg = "";
 
 const AvatarProfile = () => {
+  
+  const navigate= useNavigate();  
   const loggedInCred= JSON.parse(localStorage.getItem("credentials"));
-  const{user:{userName:userName,userEmail:userEmail,userStatus:userStatus}}=loggedInCred;
-  //const{authenticatedUser,setAuthenticatedUser}=useAuth();  
-  const navigate= useNavigate();
+
+  let user,userName,userEmail,userStatus=null;
+  
+  if(loggedInCred){
+    user=loggedInCred.user;
+    userName=user.userName;
+    userEmail=user.userEmail;
+    userStatus=user.userStatus;
+  }
  
-   
-    const handleSignOut=(event=null)=>{
+ //const{authenticatedUser,setAuthenticatedUser}=useAuth();  
+    
+  const handleSignOut=(event=null)=>{
      if(event!=null)
          event.preventDefault();
      //setAuthenticatedUser(null);
@@ -20,12 +29,11 @@ const AvatarProfile = () => {
      navigate("/")//logout user;
      
    }
-
-    if(userName==null)
-        handleSignOut();    
   
-    
-    return (
+   if(userName==null)
+       handleSignOut();    
+  
+   return (
        <div className="profile">
         <ul>
             <li className="nav-item dropdown pe-3">

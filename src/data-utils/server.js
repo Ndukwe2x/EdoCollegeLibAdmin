@@ -89,7 +89,8 @@ export const createToken = async (token, expiryDate) => {
             "Authorization": `Bearer ${loggedInCred.token}`
         }
     };
-    const tokenSubmitData = { token: token, expiresAt: expiryDate }
+    
+    const tokenSubmitData = { token: token, expiresAt: expiryDate, createdAt:Date.now()}
 
     try {
         const response = await api.post("admin/token",
@@ -157,7 +158,7 @@ export const AddToBooks = async ({ catalogueRef, title, author, docType, bookCov
     bookData.isbn = isbn; bookData.yearOfPublication = yearOfPublication;
     bookData.bookDescription = bookDescription;
     bookData.fileName = bookFile;
-    bookData.coverImageName = bookCover;
+    bookData.coverImageName = bookCover.key;
 
     
     try {
@@ -215,7 +216,7 @@ export const uploadCoverImageToS3 = async (bookCover, progressBarObject) => {
 
         const formData = new FormData();
         formData.append('bookCover', bookCover);
-        const bookUploadResponse = await uploadApi.post('admin/books/bookcover', formData, authHeader);
+        const bookUploadResponse = await uploadApi.post('admin/books/temp/bookcover', formData, authHeader);
 
         return bookUploadResponse;
     } catch (error) {
@@ -242,6 +243,26 @@ export const uploadVideoThumbsToS3 = async (videoThumbs) => {
         console.log(error);
         throw error;
     }
+}
+export const uploadSmallSizeBookFile= async(bookFile)=>{
+    const loggedInCred = JSON.parse(localStorage.getItem("credentials"));
+    let authHeader = {
+        headers: { "Authorization": `Bearer ${loggedInCred.token}` }
+    };
+    try {
+
+        const formData = new FormData();
+        formData.append('bookFile', bookFile);
+       
+        const bookUploadResponse = await uploadApi.post('admin/books/temp', formData, authHeader);
+
+        return bookUploadResponse;
+    } catch (error) {
+        console.log(error);
+        throw error;
+    }
+
+
 }
 export const uploadBookSmallFileSize = async (uploadData, progressBarObject) => {
 
@@ -303,7 +324,7 @@ export const uploadVideoSmallFileSize = async (uploadData, progressBarObject) =>
 
 
 }
-export const uploadBookToS3 = async (uploadFile, proggresBarObject) => {
+export const uploadBookToS3 = async (uploadFile, progressBarUpdate) => {
 
     const loggedInCred = JSON.parse(localStorage.getItem("credentials"));
     let authHeader = {
@@ -312,7 +333,7 @@ export const uploadBookToS3 = async (uploadFile, proggresBarObject) => {
 
     try {
         //initiate multipart upload     
-        const response = await uploadApi.post("admin/books/fastupload/start/", { filetype: "book" }, authHeader);
+        const response = await uploadApi.post("admin/books/fastupload/start/", { filetype: "book",tempUpload:true }, authHeader);
 
         const { data: { fileName: fileName, uploadId: uploadId } } = response.data;
 
@@ -340,8 +361,15 @@ export const uploadBookToS3 = async (uploadFile, proggresBarObject) => {
             formData.append('bookFile', filechunk);
             formData.append("fileName", fileName);
             formData.append('uploadId', uploadId);
+            
 
-            const uploadPromise = uploadApi.post("admin/books/fastupload/push", formData, authHeader)
+            const uploadPromise = uploadApi.post("admin/books/fastupload/push", formData, 
+                authHeader).then(()=>{
+                uploadedChunks++;
+                const progress = Math.floor((uploadedChunks / numberOfChunks) * 100);
+                progressBarUpdate(progress);
+              });
+
             uploadPromises.push(uploadPromise);
             start = end;
         }

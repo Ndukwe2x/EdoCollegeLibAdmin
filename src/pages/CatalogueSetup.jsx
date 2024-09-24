@@ -1,20 +1,22 @@
-import { useLoaderData, Form, useActionData,
-     useNavigation, useNavigate,useSearchParams } from 'react-router-dom';
+import { useLoaderData, Form, useActionData,useNavigation, 
+        useNavigate,useSearchParams, defer,  Await} from 'react-router-dom';
 import { authenticateAdmin } from '../auth/authHandler';
 import { catalogueDataLoader } from '../data-utils/dataLoaders';
 import { Tooltip } from 'react-tooltip';
 import DataTableViewer from '../components/DataTableViewer/DataTableViewer';
 import TableActionButton from "../components/TableActionButton/TableActionButton";
-import { useEffect, useState } from 'react';
+import { Suspense, useEffect, useState } from 'react';
 import { addToCatalogue,deleteCatalogueItem, editCatalogueEntry } from '../data-utils/server';
 import DeleteModal from '../components/ModalDialogs/DeleteModal';
 import PromptModal from '../components/ModalDialogs/PromptModal';
+import SectionLoader from '../components/SectionLoader/SectionLoader';
+
 
 
 export const loader =async () => {
-   await authenticateAdmin("/")
+    authenticateAdmin("/");
    try {
-    return await catalogueDataLoader();
+    return defer({catalogueData:catalogueDataLoader()})
    } catch (error) {
     return null
    }
@@ -55,13 +57,13 @@ const CatalogueSetup = () => {
     const [modalShow, setModalShow] = useState(false);
     const [promptModalShow,setPromptModalShow]=useState(false);
     const [promptMessage,setPromptMessage]=useState("");
-    const [listRefreshing,setListRefreshing]=useState(false);
+    const [firstInstanceRender,setFirstInstanceRender]=useState(true);
     const [searchParam,setSearchParams]=useSearchParams();
     const  navigate=useNavigate();
     const [formData,setFormData]=useState({title:""})
         
-    const { data: { data: { catalogue: catalogue } } } = useLoaderData();
-    const [catalogueData, setCatalogueData] = useState(catalogue);
+    const catalogueDataPromise= useLoaderData();
+    const [catalogueData, setCatalogueData] = useState([]);
     const actionResponse = useActionData();
 
     const tooltipStyle = {backgroundColor: '#605286' };
@@ -78,12 +80,25 @@ const CatalogueSetup = () => {
            dataRefresh=true
          }
     }
-   console.log("catalogue setup");
+  
+    useEffect(()=>{
+        if(firstInstanceRender){
+            catalogueDataLoader()
+            .then(response=>{
+               const {data:{data:{catalogue:catalogueList}}}=response;
+               setCatalogueData(catalogueList);          
+            })
+          .catch(error=>console.log(error))
+          .finally(()=>setFirstInstanceRender(false))   
+          }  
+      
+    },[])
+  
     useEffect(()=>{
         if(dataRefresh){
+            setFirstInstanceRender(false);
             async function getReloadData(){
                 try {
-                    setListRefreshing(true);
                    const reloadData=await catalogueDataLoader(); 
                    const {data:{data:{catalogue:freshData}}}= reloadData;
                    setSearchParams({});
@@ -92,14 +107,11 @@ const CatalogueSetup = () => {
                    setCatalogueData(freshData);
                 } catch (error) {
                    console.log(error);   
-                }finally{
-
-                    setListRefreshing(false);
                 }
              }
              getReloadData();
             }     
-    },[dataRefresh]); console
+    },[dataRefresh]); 
 
     
     function startEdit(record_id)
@@ -152,11 +164,8 @@ const CatalogueSetup = () => {
            
         try {          
            const response= await deleteCatalogueItem(recordIndex); 
-           if(response.status==200)
-             {
-              setListRefreshing(true);
-              removeDeletedEntry(recordIndex); 
-            }
+           if(response.status==200)                        
+              removeDeletedEntry(recordIndex);             
               
            } catch (error) {
               const {response}=error;
@@ -165,15 +174,17 @@ const CatalogueSetup = () => {
                   navigate("/",{replace:true})//log user out
               else
              { 
-                
-                 setPromptMessage("Delete Operation failed. Internal Server Error, Try again later.")
-                 setPromptModalShow(true);
+                setPromptMessage("Delete Operation failed. Internal Server Error, Try again later.")
+                setPromptModalShow(true);
              }           
           }finally{
-            setListRefreshing(false);
+           
             setSearchParams({}); //clear search params
           }         
         
+     }
+     const goToPreviousPage=()=>{
+        navigate(-1);//move to the previous page
      }
      const handleChange=(event)=>{
         const {name,value}=event.target;
@@ -213,12 +224,14 @@ const CatalogueSetup = () => {
          return navigation.state === "submitting" ? "Adding..." : "Add";
       }
 
-
     }
     return (
         <>
         <div className='catalogue-pg row'>
-            <h3 >Catalogue Setup</h3>
+            <div className='topnav-catlogue'><button className='btn '
+             onClick={goToPreviousPage} data-tooltip-id="tooltipBackButton">
+                <i className="bi bi-chevron-left"></i> <span className='bckbtnTxt'>Back</span> </button>
+                  <h3 >Catalogue Setup</h3></div>
             <div className='row justify-content-center justify-content-start-lg'>
                 <div className="col-11 col-sm-8 col-md-7 col-lg-6 catalogue-form ">
                     <Form method='post' >
@@ -249,22 +262,34 @@ const CatalogueSetup = () => {
                     </Form>
                 </div>
                 <div className='cat-tree-section col-11 col-sm-8 col-lg-5 '>
-                    {
-                    listRefreshing ? <p className='loading'>Reloading changes...</p> :
-                        (<>
-                            <h5>Catalogue List</h5>
-                        
-                            <div className='catalogue-table  '>
-                                <DataTableViewer columns={catalogueColumns}
-                                 data={catalogueData} enableFilter={false} pageLimit={10} />
-                            </div></>)}
+                    <h5>Catalogue List</h5>
+                    <div className='catalogue-table '>
+                     <Suspense fallback={<SectionLoader sectionName={"Catalogue List"} />}>
+                       {  
+                        firstInstanceRender ?(                       
+                            <Await resolve={catalogueDataPromise.catalogueData}>
+                              {
+                                (catalogue)=>{
+                                 const {data:{data:{catalogue:catalogueList}}}=catalogue;
+                                  return(<DataTableViewer columns={catalogueColumns}
+                                    data={catalogueList} enableFilter={false} pageLimit={5} />);
+                                }
+                              }  
+                            </Await>
+                     
+                      ) :(<DataTableViewer columns={catalogueColumns}
+                        data={catalogueData} enableFilter={false} pageLimit={5} />)
+                       }  
+                     </Suspense>
+                 </div>                    
                 </div>
                 <Tooltip id="tooltipCancel" style={tooltipStyle} place="bottom" content="cancel edit process" />
                 <Tooltip id="tooltipsubmit" style={tooltipStyle} place="bottom" content="add to list of catalogue" />
+                <Tooltip id="tooltipBackButton" style={tooltipStyle} place="bottom" content="back to previous page" />
             </div>
         </div>
          
-          < DeleteModal  show={modalShow}
+          <DeleteModal  show={modalShow}
            bodyText={`  Are you sure, you want to delete ${selectedCatalogue.title} from catalogue?`}
            onHide={() => setModalShow(false)} headerText={"Delete catalogue"}
            submitHandler={()=>deleteCatalogue(recordId)}/>

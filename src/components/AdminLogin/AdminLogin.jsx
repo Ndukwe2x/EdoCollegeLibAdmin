@@ -5,7 +5,8 @@ import './login.css'
 import { useState,useEffect,createContext,useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { loginAdmin } from '../../auth/authHandler';
-import { useAuth} from '../../auth/AuthContext'
+import { useAuth} from '../../auth/AuthContext';
+import PasswordInput from '../PasswordInput/PasswordInput';
 
 
 const AdminLogin = () => {
@@ -88,13 +89,9 @@ const AdminLogin = () => {
               disabled={submitStatus=="submitting"}
               type='email' placeholder='Enter your email' {...formik.getFieldProps('email')} />
             {formik.touched && formik.errors.email ? (<p className='errTxt'>{formik.errors.email}</p>) : null}
-            
-            <label htmlFor='pasword'>Password</label>
-            <input className='form-control' id='password' name='password' maxLength={30} 
-            disabled={submitStatus=="submitting" }
-              type='password' placeholder='Password' {...formik.getFieldProps('password')} />
-            {formik.touched && formik.errors.password ? (<p className='errTxt'>{formik.errors.password}</p>) : null}
-            
+
+            <PasswordInput disabled={submitStatus=="submitting"} controller={formik}/>
+                    
             <button type='submit' className='btn btn-primary submitBtn clearfix'
               disabled={submitStatus=="submitting"}
               data-tooltip-id="tooltipsubmit">

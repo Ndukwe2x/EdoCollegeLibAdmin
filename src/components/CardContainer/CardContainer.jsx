@@ -22,11 +22,11 @@ const [pageNumber,setPageNumber]=useState(1);
      
       if(cardType=="books")
        {
-         return cardData.slice(startPoint,endPoint).map(book=>(< BookCard bookData={book} key={book._id}
+         return cardData.slice(startPoint,endPoint).map(book=>(<BookCard bookData={book} key={book._id}
           bookDelete={()=>handleDelete(book._id)} bookEdit={()=>handleEdit(book._id)} />)
        );
        }else{
-        return cardData.slice(startPoint,endPoint).map( video=>(<VideoCard videoData={video} 
+        return cardData.slice(startPoint,endPoint).map( video=>(<VideoCard videoData={video} key={video._id}
         videoEdit={()=>handleEdit(video._id)} videoDelete={()=>handleDelete(video._id)} />));
        
        }

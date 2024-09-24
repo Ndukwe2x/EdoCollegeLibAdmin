@@ -5,7 +5,11 @@ export function UTCDateToDateTimeString(UTCDate){
     const day= UTCDate.getDate();
     let hours= UTCDate.getHours();
     let minutes=UTCDate.getMinutes();  
-    minutes=(minutes<10?`0${minutes}`:minutes); //format minutes with leading zeros
+
+    /* console.log('Hours: ',hours);
+    console.log('minutes',minutes); */
+
+    minutes=(minutes<10?`0${minutes}`: minutes); //format minutes with leading zeros
     const meridian= (hours <= 11 ? "AM":"PM") ;   
     hours=(hours <=12 ? hours: hours-12); //convert hours to local date
    return `${day}/${month}/${year}, ${hours}:${minutes} ${meridian}`;

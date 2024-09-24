@@ -1,6 +1,6 @@
 
-import { useEffect, useState } from "react";
-import { useLoaderData } from "react-router-dom";
+import { Suspense, useEffect, useState } from "react";
+import { Await, defer, useLoaderData, useNavigate } from "react-router-dom";
 import {authenticateAdmin } from "../auth/authHandler";
 import DeleteModal from "../components/ModalDialogs/DeleteModal";
 import { Tooltip } from "react-tooltip";
@@ -8,11 +8,12 @@ import DataTableViewer from "../components/DataTableViewer/DataTableViewer";
 import { libraryStudentAccounts } from "../data-utils/dataLoaders";
 import { approveStudentAccount, deleteStudentAccount } from "../data-utils/server";
 import PromptModal from "../components/ModalDialogs/PromptModal";
+import SectionLoader from "../components/SectionLoader/SectionLoader";
 
 export const loader = () => {
     authenticateAdmin("/");
     try {
-     return   libraryStudentAccounts();
+     return   defer({studentAccts:libraryStudentAccounts()});
     } catch (error) {
       console.log(error);
       return null;  
@@ -21,34 +22,44 @@ export const loader = () => {
 }
 
 const StudentAccounts=()=>{
-    
+    const studentListPromise=useLoaderData();
     const [recordId,setRecordId]=useState(null);
     const [startDelete,setStartDelete]=useState(false);
     const [startApprove,setStartApprove]=useState(false);
     const [submitting, setSubmitting]=useState(false);
-    const [errorOnSubmit,setErrorOnSubmit]=useState(false);
+    const [firstInstanceRender,setFirstInstanceRender]=useState(true);  
     const [modalShow, setModalShow] = useState(false);
     const [headerText, setHeaderText]=useState("");
     const [modalBody, setModalBody]=useState("");
     const [promptShow,setPromptShow]=useState(false);
     const [promptHeader,setPromptHeader]=useState("");
     const [promptBody,setPromptBody]=useState("")
-    const [processingMsg,setProcessingMsg]=useState("");
-    const {data: { data: { students: students } } } = useLoaderData();
-    const [studentList,setStudentList]=useState(students|| []);
-    
+    const [processingMsg,setProcessingMsg]=useState("");  
+    const [studentList,setStudentList]=useState([]);    
 
     const tooltipStyle = {backgroundColor: '#605286' };
-
-
+    const navigate= useNavigate();
+   
+    useEffect(()=>{
+  
+        if(firstInstanceRender){
+            
+         libraryStudentAccounts()
+          .then(response=>{
+          const {data: { data: { students: studentAccounts } } } = response;
+             setStudentList(studentAccounts)
+           })
+        .catch(error=>console.log(error))
+        .finally(()=>setFirstInstanceRender(false))   
+        }  
+        
+      },[]);
     useEffect(()=>{
         if(startDelete){
            setSubmitting(true);
-           
            const performDelete= async()=>{
            try {
-              const deleteResult= await deleteStudentAccount(recordId);
-               
+              const deleteResult= await deleteStudentAccount(recordId);               
               if(deleteResult.status==200)
                {   const {data: { data: { students: refreshList } } }= await libraryStudentAccounts();
                    setStudentList(refreshList );
@@ -71,6 +82,7 @@ const StudentAccounts=()=>{
     useEffect(()=>{
         if(startApprove){
            setSubmitting(true);
+          
            const performApproval=async()=>{
             try {
                 const approveResult= await approveStudentAccount(recordId);
@@ -93,7 +105,10 @@ const StudentAccounts=()=>{
         
         
     },[startApprove])
-
+   
+    const goToPreviousPage=()=>{
+     navigate(-1); //move back to previous page
+    }
     const handleApprove=(record_id)=>{
        setProcessingMsg("Please wait. Processing user approval...");
        setRecordId(record_id);
@@ -172,7 +187,8 @@ const StudentAccounts=()=>{
 
     return(<div>
            <div className="topNav bckbtn">
-            <button className="btn btn-secondary">Back</button>
+            <button className="btn " onClick={goToPreviousPage}
+             data-tooltip-id="tooltipBackButton"> <i className="bi bi-chevron-left"></i> Back</button>
            </div>
           <div>
             <h2 className="pgCaption">Student list</h2>
@@ -181,16 +197,32 @@ const StudentAccounts=()=>{
                 <p className="indicator-text">{`${processingMsg}`}</p>
              </div>}
             <div className="listTable" disabled={submitting}>
-                <DataTableViewer columns={studentListColumns} data={studentList} 
-                 enableFilter={true} pageLimit={50}/>
-               
+                <Suspense fallback={<SectionLoader sectionName={"Student List"} />} >
+                 {firstInstanceRender?
+                    (<Await resolve={studentListPromise.studentAccts} >
+                      {  
+                        (accountList)=>{
+                           
+                           const {data: { data: { students: studentAccounts } } } = accountList;                          
+                              return (<DataTableViewer columns={studentListColumns} data={studentAccounts} 
+                      enableFilter={true} pageLimit={50}/>)
+                         }
+                        
+                      }                   
+                  </Await>): ( <DataTableViewer columns={studentListColumns} data={studentList} 
+                      enableFilter={true} pageLimit={50}/>)
+                
+                  }
+                </Suspense>
+                
             </div>
 
           </div>
           </div>
           <Tooltip id="tooltipDelete" style={tooltipStyle} place="bottom" content="delete student Account" />
           <Tooltip id="tooltipApprove" style={tooltipStyle} place="bottom" content="activate account" />
-
+          <Tooltip id="tooltipBackButton" style={tooltipStyle} place="bottom" content="back to previous page" />
+          
           <DeleteModal show={modalShow}   bodyText={modalBody}
             onHide={() => setModalShow(false)} headerText={headerText}
            submitHandler={deleteStudent}/>

@@ -15,11 +15,12 @@ import { AuthProvider } from './auth/AuthContext';
 import AddBooks,{loader as booksCatalogueLoader} from './pages/AddBooks';
 import AddVideos, {loader as videoCatalogueLoader} from './pages/AddVideos';
 import StudentAccounts,{loader as studentsLoader} from './pages/StudentAccounts';
+import SectionLoader from './components/SectionLoader/SectionLoader';
 
 
 const router=createBrowserRouter(createRoutesFromElements(
             <>    
-              <Route path="/" element={<Home />} /> 
+              <Route path="/" element={<Home />} errorElement={<h2>There was an error!</h2>} /> 
               <Route path="/dashboard" element={<DashboardSharedLayout/>} loader={dashboardLayoutLoader} > 
                   <Route index element={<DashboardMain/>} loader={dashboardLoader}
                    errorElement={<ErrorSharedLayout/>}
@@ -39,6 +40,7 @@ const router=createBrowserRouter(createRoutesFromElements(
                     <Route path='students' element={<StudentAccounts/>} loader={studentsLoader}
                      errorElement={<ErrorSharedLayout/>} />
               </Route>  
+              <Route path='/component-loading' element={<SectionLoader/>} />
               <Route path='*' element={<NotFound404/>} /> 
             </>        
 ));
