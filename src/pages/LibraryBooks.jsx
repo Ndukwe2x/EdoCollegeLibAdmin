@@ -4,14 +4,14 @@ import CardContainer from "../components/CardContainer/CardContainer";
 import { libraryResourcesBooks } from "../data-utils/dataLoaders";
 import TableActionButton from "../components/TableActionButton/TableActionButton";
 import DataTableViewer from "../components/DataTableViewer/DataTableViewer";
-import { Await, defer, useLoaderData, useNavigate } from "react-router-dom";
+import { Await, defer, useLoaderData, useNavigate, useSearchParams } from "react-router-dom";
 import DeleteModal from "../components/ModalDialogs/DeleteModal";
+import PromptModal from "../components/ModalDialogs/PromptModal";
 import { FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import { faMagnifyingGlass } from "@fortawesome/free-solid-svg-icons";
 import { deleteBook } from "../data-utils/server";
 import SectionLoader from "../components/SectionLoader/SectionLoader";
 import { Tooltip } from "react-tooltip";
-
 
 
 export const loader = () => {
@@ -33,6 +33,8 @@ export const loader = () => {
    const [modalShow, setModalShow] = useState(false);
    const [headerText, setHeaderText]=useState("");
    const [modalBody, setModalBody]=useState("");
+   const [showPromptModal,setShowPromptModal]=useState(false);
+   const [promptMode,setPromptMode]=useState("");
    const [recordId,setRecordId]=useState(null);
    const [startDelete,setStartDelete]=useState(false);
    const [searchTerm,setSearchTerm]=useState("");
@@ -40,12 +42,19 @@ export const loader = () => {
    const [firstInstanceRender,setFirstInstanceRender]=useState(true);
    const navigate= useNavigate();
 
+   const [searchParams,setSearchParams]=useSearchParams();
+
   const tableRecordStyle={font:'normal 0.92em Calibri',margin:'0'};
   const tooltipStyle = {backgroundColor: '#605286' };
+  //setSearchParams({mode:"edit",resourceId:293002002});
    
   function handleEdit(bookId){
+    
+     const navigationPath= '../addbooks';
+     const navigationState={mode:"edit",resourceId:bookId};
         
-
+     navigate(navigationPath,{state:navigationState});
+     
    }
    function handleDelete(bookId){
      setHeaderText("Delete Book");
@@ -76,23 +85,43 @@ export const loader = () => {
         
         const performDelete=async()=>{
             try {
-
-               const deleteResponse= await deleteBook(recordId); 
-                
-              if(deleteResponse.status==200){
-                  const currentBookInLibrary= await libraryResourcesBooks();
-                  const { data: { data: { books: newbookList } } } =currentBookInLibrary;
-                  setLibraryBooks(newbookList)
+             
+              const deleteResponse= await deleteBook(recordId); 
+            
+             if(deleteResponse.status==200){
+                await  refreshLibraryBooks();
               }          
 
             } catch (error) {
-              console.log(error)
+              await handleError(error);
+              console.log(error);
             }finally{
               setSumbitting(false);
+              setStartDelete(false);
             }
+        }
+         const handleError=async(err)=>{
+            const {status}=err?.response;
+            const {statusText}=err?.response;
+                  
+           if (status==404 && statusText === "Not Found" )
+           {  
+              setHeaderText("Book Not Found");
+              setModalBody("Book seems be already removed from database");
+              setPromptMode("info");
+              setShowPromptModal(true)
+              await refreshLibraryBooks();
+           }
+        }
+        const refreshLibraryBooks=async()=>{
+          const currentBookInLibrary= await libraryResourcesBooks();
+          const { data: { data: { books: newbookList } } } =currentBookInLibrary;
+          setLibraryBooks(newbookList);
+          setSearchResult(newbookList);//sync book list display with initial no search
         }
         performDelete();
         setStartDelete(false);
+        setSumbitting(false);
     }
 
    },[startDelete]);
@@ -195,7 +224,10 @@ export const loader = () => {
         </Suspense>
        
        </div>
-       < DeleteModal  show={modalShow}
+      
+       <PromptModal onHide={()=>setShowPromptModal(false)} headerText={headerText}
+            show={showPromptModal} bodyText={modalBody} mode={promptMode} />
+       <DeleteModal  show={modalShow}
            bodyText={modalBody}
            onHide={() => setModalShow(false)} headerText={headerText}
            submitHandler={()=>deleteSelectedBook()}/>           

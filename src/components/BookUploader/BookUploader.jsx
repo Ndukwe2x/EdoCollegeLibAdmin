@@ -7,17 +7,16 @@ import { Tooltip } from 'react-tooltip';
 import cursorDropLocation from '../../assets/cursorAdd.png'
 import progressLoop from '../../assets/progressloop.gif';
 import bookuploadimg from '../../assets/dtchfile.png';
-import {AddToBooks, uploadBookToS3, uploadCoverImageToS3,
+import {AddToBooks, editBook, uploadBookToS3, uploadCoverImageToS3,
    uploadSmallSizeBookFile } from '../../data-utils/server';
 
 
-const BookUploader=({mode="Add", libraryCatalogue, bookId=null})=>{
+const BookUploader=({mode="add", libraryCatalogue, bookId=null, formModeReset })=>{
     const tooltipStyle = { backgroundColor: '#20134488' };
     const cursorDragStyle={cursor:`url("${cursorDropLocation}") ,auto`,
     boxShadow:"rgba(8, 104, 75, 0.877) 0 0 18px 2px"};
-    
-    
-    const [editReset,setEditReset]=useState(false);   
+        
+      
     const [promptBody,setPromptBody]=useState("");
     const [promptHeader,setPromptHeader]=useState("");
     const [promptMode,setPromptMode]=useState("");
@@ -33,6 +32,7 @@ const BookUploader=({mode="Add", libraryCatalogue, bookId=null})=>{
     const [uploadInProgress,setUploadInProgress]=useState(false);
     const [bookUploadInProgress,setBookUploadInProgress]=useState(false);
     const [progressLevel,setProgressLevel]=useState(0);
+    const [defaultBookDetails,setDefaultBookDetails]=useState({});
     
     const bookFileInputRef = useRef(null);
     const coverBookFileInputRef = useRef(null);
@@ -73,28 +73,37 @@ const BookUploader=({mode="Add", libraryCatalogue, bookId=null})=>{
     const initialFormStep={step:1}
     const [formStep,dispatchStep]=useReducer(formStepTracker,initialFormStep);
     
-    const resetFormToAddMode=()=>{
-
-    }
+   
     
-    useEffect(()=>{
+   useEffect(()=>{
 
     if(startSubmit){
 
        const finalizeBookSubmit=async()=>{
-        
+         let status=null;
           try {
-            const bookDetailsResponse = await AddToBooks(formData);
-            const{data:{status}}=bookDetailsResponse;
-           
-            if (status == "success") {
-            {  
-              clearAndResetForm()
+            if(mode=="add")
+            { 
+              const bookDetailsResponse = await AddToBooks(formData);
+              status=bookDetailsResponse.data.status;
+            }
+            else if(mode=="edit")
+            {
+              const bookDetailsResponse= await editBook(formData);
+              status= bookDetailsResponse?.data?.status;
+            }
+            if (status =="success") {
+            { 
+               resetFormToAddMode();
             }
           }
             } catch (error)
             {
-            console.log(error);
+             setPromptHeader("Error on Submit");
+             setPromptBody(" Failed to complete upload, error while submitting. Try again later");
+             setPromptMode("error");
+             setShowModal(true);
+              console.log(error);
             }finally{
             
             setStartSubmit(false);
@@ -121,9 +130,16 @@ const BookUploader=({mode="Add", libraryCatalogue, bookId=null})=>{
                       setPromptBody(` Book entry not found in the library, book may have been deleted`);
                       setPromptMode("error");
                       setShowModal(true);
-                      resetFormToAddMode(); //** Don't forget code this **/
+                      resetFormToAddMode();
                     }else
-                       setFormData({...selectedBook});//populate form with book details                   
+                    {  setFormData({...selectedBook,_id:selectedBook._id,bookFile:selectedBook.fileName,
+                        bookCover:{key:selectedBook.coverImageName,url:selectedBook.coverUrl,
+                          filetype:selectedBook.coverImageType} }); 
+
+                        setDefaultBookDetails({...selectedBook,_id:selectedBook._id,bookFile:selectedBook.fileName,
+                          bookCover:{key:selectedBook.coverImageName,url:selectedBook.coverUrl,
+                            filetype:selectedBook.coverImageType} });
+                      }                                                                     
                  }
                 
                } catch (err) {
@@ -132,6 +148,7 @@ const BookUploader=({mode="Add", libraryCatalogue, bookId=null})=>{
            }          
            if(mode=="edit" && bookId){
                 loadBookEditValues();
+               
            }
           
     },[]);
@@ -145,8 +162,10 @@ const BookUploader=({mode="Add", libraryCatalogue, bookId=null})=>{
            const bookCoverUploadResponse= await uploadCoverImageToS3(coverFile);
           
            if(bookCoverUploadResponse.status == 201 ){
-            const coverImageFile=bookCoverUploadResponse.data.bookCover;
-            setFormData(prevData => ({ ...prevData, bookCover: coverImageFile }));
+            const coverImageFile=bookCoverUploadResponse.data.bookCover;            
+           setFormData(prevData => ({ ...prevData, bookCover:coverImageFile,
+              coverImageType:coverImageFile.filetype
+             }));     
           
            }                      
            
@@ -189,8 +208,8 @@ const BookUploader=({mode="Add", libraryCatalogue, bookId=null})=>{
                   uploadSmallSizeBookFile(fileToBeUploaded).then(
                     response=>{
                        setProgressLevel(100); 
-                       setFormData(prevData => ({ ...prevData, bookFile: response.data.fileKey }));
-                                           
+                       setFormData(prevData => ({ ...prevData, 
+                        bookFile: response.data.fileKey,docType:response.data.filetype }));                                           
                     }
                   ).catch(err=>{ 
                     console.log(err)
@@ -208,10 +227,11 @@ const BookUploader=({mode="Add", libraryCatalogue, bookId=null})=>{
                     const upldResponse = await  uploadBookToS3(fileToBeUploaded, handleProgressBarUpdate);
                        if (upldResponse.status == 201) 
                        {
+                         const documentType= fileToBeUploaded.type;
                          setBookUploadInProgress(false);
-                         setFormData(prevData => ({ ...prevData, bookFile:upldResponse.filename }));
+                         setFormData(prevData => ({ ...prevData,docType:documentType, bookFile:upldResponse.filename }));
                        
-                        }
+                       }
                     
                  } catch (error) {
                    console.log(error);
@@ -228,12 +248,12 @@ const BookUploader=({mode="Add", libraryCatalogue, bookId=null})=>{
       }
    },[bookFileSubmit])
    
-    const setBookDetailsEntry=()=>{
-
-
-    }
         
-    const submitBook=(event)=>{
+ const handleResetEdit=()=>{
+  console.log("Form reset details", defaultBookDetails);
+   setFormData(defaultBookDetails);
+ }
+ const submitBook=(event)=>{
         event.preventDefault();
         setSubmitStatus("submitting");
         setStartSubmit(true);   
@@ -245,15 +265,17 @@ const BookUploader=({mode="Add", libraryCatalogue, bookId=null})=>{
           return { ...prevError, [name]: false }
       })
   }
-  const cancelEdit=()=>{
-
+  
+  const resetFormToAddMode=()=>{
+    clearAndResetForm();
+    formModeReset();
   }
   const handleClearFormClick=(event)=>{
     event.preventDefault();
     clearAndResetForm();
   }
   function clearAndResetForm(){
-     clearForm();
+    clearForm();
     dispatchStep({type:"previous"});
     dispatchStep({type:"previous"});
   }
@@ -272,7 +294,7 @@ const BookUploader=({mode="Add", libraryCatalogue, bookId=null})=>{
         bookDescription: "",
     });
 
-
+    setDefaultBookDetails({});
     setFormError({
         catalogueRef: false, title: false, author: false, isbn: false,
         docType: false,
@@ -299,17 +321,19 @@ const BookUploader=({mode="Add", libraryCatalogue, bookId=null})=>{
     
   }
  function handleBookUploadEditDelete(event){
-   if(mode=="Add"){
-     const {id}=event.target;
+   const {id}=event.target;
+   if(mode=="add"){
      if(id=="coverDelIcon")
       return setFormData(prevData =>({ ...prevData, bookCover: undefined }));
     else if(id=="bookDelIcon")
       return setFormData(prevData => ({ ...prevData, bookFile: "" }));
-
-    return;
+   
    }
-   if(mode=="Edit"){
-    return;
+   if(mode=="edit"){
+      if(id=="coverEditIcon")
+         coverBookFileInputRef.current.click();
+     else if(id=="bookEditIcon")
+         bookFileInputRef.current.click();
    }
  }
   const handleDragOver=(event)=>{
@@ -317,8 +341,7 @@ const BookUploader=({mode="Add", libraryCatalogue, bookId=null})=>{
     const {id}=event.target;
     if(id=="bookDropSctn")
      return  setDragEnterBook(true);
-    setDragEnter(true);
-   
+    setDragEnter(true);   
 
   }
   const handleDragEnterBookCover=(event)=>{
@@ -394,9 +417,9 @@ const BookUploader=({mode="Add", libraryCatalogue, bookId=null})=>{
     
   }
   const handleMoveNext=()=>{
-  if(validateForm())
-    dispatchStep({type:"next"})
-  }
+   if(validateForm())
+     dispatchStep({type:"next"});
+ }
   const validateCoverImage=(coverFile)=>{
      const {size,type}=coverFile;
      let validated=true;
@@ -430,11 +453,11 @@ const BookUploader=({mode="Add", libraryCatalogue, bookId=null})=>{
              setError("author");
              validationPass=false;             
            }         
-         if (formData.title == "")          {
+         if (formData.title == ""){
               setError("title")
               validationPass=false;
-           }
-          break;
+          }
+         break;
         case 2:
           if(formData.bookFile=="")
              { 
@@ -477,7 +500,7 @@ function displayForm(uploadStage){
                 onDragLeave={handleDragLeave}  style={onDragEnter?(cursorDragStyle):({cursor:"default"})} >
                   {formData?.bookCover?.url && <span className='deleteUploaded'>
                     <button className='uploadDelete' title='remove' type='button' onClick={handleBookUploadEditDelete}> 
-                      { mode==="Add"? <i id='coverDelIcon' className="bi bi-x-circle-fill deleteIcon"></i>
+                      { mode==="add"? <i id='coverDelIcon' className="bi bi-x-circle-fill deleteIcon"></i>
                        :(<i id='coverEditIcon' className="bi bi-pencil-square editIcon"></i>)}
                     </button>
                   </span>}
@@ -512,9 +535,9 @@ function displayForm(uploadStage){
                onDragOver={handleDragOver} onDrop={handleBookFileDrop} onDragExit={handleDragExit} 
                 onDragLeave={handleDragLeave}  style={onDragEnterBook?(cursorDragStyle):({cursor:"default"})}  >
                  { formData.bookFile!=="" && <span className='deleteUploaded bkfileDelete'>
-                    <button className='uploadDelete' title='remove' type='button' onClick={handleBookUploadEditDelete}>
-                      {mode==="Add"? <i id='bookDelIcon' className="bi bi-x-circle-fill deleteIcon"></i>
-                       :(<i className="bi bi-pencil-square editIcon"></i>)}
+                    <button className='uploadDelete' title='remove/change' type='button' onClick={handleBookUploadEditDelete}>
+                      {mode==="add"? <i id='bookDelIcon' className="bi bi-x-circle-fill deleteIcon"></i>
+                       :(<i id='bookEditIcon' className="bi bi-pencil-square editIcon"></i>)}
                     </button>
                  </span>}
                   { bookUploadInProgress?
@@ -651,9 +674,14 @@ function displayForm(uploadStage){
                    <span className="clearForm">
                         <NavLink  onClick={handleClearFormClick} title='clear Form'>Clear Form</NavLink >
                     </span>
-                   {mode=="edit" && <span className="cancel-edit">
-                        <NavLink onClick={cancelEdit}> Cancel Edit</NavLink>
-                    </span>}
+                   {mode=="edit" && <><span className="cancel-edit">
+                           <NavLink data-tooltip-id='tooltipcancelEdit' onClick={resetFormToAddMode} > Cancel Edit</NavLink>
+                        </span>
+                        <span className="cancel-edit">
+                           <NavLink data-tooltip-id='tooltipresetEdit'
+                           onClick={handleResetEdit} > Reset Edit</NavLink>
+                        </span>
+                    </>}
                   { formStep.step <3 && <button className='btn btn-nav' type='button' onClick={handleMoveNext} 
                     data-tooltip-id='tooltipnextbutton'  >
                     next <i className="bi bi-chevron-right"></i>
@@ -682,6 +710,10 @@ function displayForm(uploadStage){
                 content="select the book file to upload" />
             <Tooltip id="tooltipcoverImage" style={tooltipStyle} place="bottom"
                 content="select cover image for the book" />
+            <Tooltip id="tooltipresetEdit" style={tooltipStyle} place="bottom"
+                content="reset form to default edit details" />
+            <Tooltip id="tooltipcancelEdit" style={tooltipStyle} place="bottom"
+                 content="reset form to add mode" />
             <Tooltip id="tooltipnextbutton" style={tooltipStyle} place="bottom"
             content="move to next step" />
             <Tooltip id="tooltipbackbutton" style={tooltipStyle} place="bottom"

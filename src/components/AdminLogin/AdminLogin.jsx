@@ -7,6 +7,7 @@ import { useNavigate } from 'react-router-dom';
 import { loginAdmin } from '../../auth/authHandler';
 import { useAuth} from '../../auth/AuthContext';
 import PasswordInput from '../PasswordInput/PasswordInput';
+import PromptModal from '../ModalDialogs/PromptModal';
 
 
 const AdminLogin = () => {
@@ -14,6 +15,10 @@ const AdminLogin = () => {
   const [loginError, setLoginError] = useState(false);
   const [loginResponse,setLoginResponse]=useState(null);
   const {setAuthenticatedUser}= useAuth(); //get global Auth context for setting user credentials
+  const [promptBody,setPromptBody]=useState("");
+  const [promptHeader,setPromptHeader]=useState("");
+  const [promptMode,setPromptMode]=useState("");
+  const [showModal,setShowModal]=useState(false);  
   const navigate= useNavigate();
  
   const tooltipStyle = { backgroundColor: '#20134488' };
@@ -44,11 +49,18 @@ const AdminLogin = () => {
     } 
     catch (error)
     {
-       console.log(error);
+      
       if (error.response && (error.response.status == 401 || error.response.status == 404))
         setLoginError(true);
-      else if (error.code === "ERR_NETWORK")
-        alert("Please check your internet connection");
+      else if (error.code === "ERR_NETWORK"){
+        setPromptHeader("Network Error");
+        setPromptBody(" Please check your internet connection");
+        setPromptMode("warning");
+        setShowModal(true);
+       // alert("Please check your internet connection");
+
+      }
+        
       else
         alert("Internal Server Error. Please try again later");
       
@@ -108,6 +120,8 @@ const AdminLogin = () => {
       </Formik>
       <p className='pswrd-reset'><a data-tooltip-id="tooltipresetpassword">Forgot Password?</a></p>
       <Tooltip id="tooltipresetpassword" style={tooltipStyle} place="bottom" content="reset password" />
+      <PromptModal  onHide={()=>setShowModal(false)} headerText={promptHeader}
+            show={showModal} bodyText={promptBody} mode={promptMode}/>
     </div>
   )
 

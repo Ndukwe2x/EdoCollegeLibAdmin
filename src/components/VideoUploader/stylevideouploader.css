@@ -1,0 +1,52 @@
+.videouploadr-contnr{
+    padding:10px;
+   }
+.videofile-paneupload{
+    border-radius: 9px;    
+    margin:5px 0 13px 20px;
+    max-width:300px;       
+}
+
+.thumbscontainer{
+ position: relative;
+}
+.playicon{
+    position: absolute;
+    top:40%;
+    left:40% ;
+    width:50px;
+    height:50px;
+    border-radius: 50%;
+    background-color: #424358cb;
+    zoom:150;
+    
+}
+.playtriangle{
+    font-size:30px;
+    margin:3px 12px;
+    color: #f2f2ff;
+}
+.thumbimage{
+    border-radius: 8px;
+}
+.videouploadspin-cntr{
+    padding:10px;
+    width: 200px !important;
+    max-width:200px;
+    margin: 0 auto;
+}
+.videouploadspin-cntr img{
+    width:60%;
+    margin: 0 auto;
+}
+.deleteVideoUploaded{
+    position:absolute;
+    width:90%;
+    max-width:60px;
+    top:-19px;
+    left:95%;  
+  }
+.deleteVideoUploaded button{
+    border:none;
+    background-color: transparent !important;
+   }

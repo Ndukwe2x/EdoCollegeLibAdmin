@@ -1,5 +1,7 @@
 import api from '../api/axiosConfig';
 import { uploadApi } from '../api/axiosConfig';
+import {Buffer} from 'buffer/'
+//Buffer = require('buffer/').Buffer
 
 
 export const addToCatalogue = async ({ title, parentTitle, description }) => {
@@ -60,7 +62,7 @@ export const deleteBook=async(bookId)=>{
         return response;
     }
     catch (err) {
-        throw err;
+         throw err;
      }
 }
 export const deleteVideo=async(videoId)=>{
@@ -142,7 +144,7 @@ export const editCatalogueEntry = async (catalogueId, { title, parentTitle }) =>
 
 }
 export const AddToBooks = async ({ catalogueRef, title, author, docType, bookCover, bookFile,
-    edition, yearOfPublication, isbn, bookDescription, downloadable }) => {
+    edition, yearOfPublication, isbn,coverImageType, bookDescription, downloadable }) => {
 
     const loggedInCred = JSON.parse(localStorage.getItem("credentials"));
     const authHeader = {
@@ -158,9 +160,9 @@ export const AddToBooks = async ({ catalogueRef, title, author, docType, bookCov
     bookData.isbn = isbn; bookData.yearOfPublication = yearOfPublication;
     bookData.bookDescription = bookDescription;
     bookData.fileName = bookFile;
-    bookData.coverImageName = bookCover.key;
-
-    
+    bookData.coverImageName = bookCover ? bookCover.key:"";
+    bookData.coverImageType=coverImageType;
+   
     try {
         const booksAddresponse = await uploadApi.post('admin/books/add', bookData, authHeader);
         
@@ -170,6 +172,39 @@ export const AddToBooks = async ({ catalogueRef, title, author, docType, bookCov
         console.log(err);
         throw err;
     }
+
+}
+export const editBook=async({_id,catalogueRef, title, author, docType, bookCover, bookFile,
+    edition, yearOfPublication, isbn,coverImageType,coverImageName,fileName, bookDescription, downloadable})=>{
+
+        const loggedInCred = JSON.parse(localStorage.getItem("credentials"));
+        const authHeader = {
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${loggedInCred.token}`
+            }
+        };
+       
+        const bookData = {};
+        bookData._id=_id;
+        bookData.catalogueRef = catalogueRef; bookData.title = title;
+        bookData.author = author; bookData.docType = docType; bookData.edition = edition;
+        bookData.isbn = isbn; bookData.yearOfPublication = yearOfPublication;
+        bookData.bookDescription = bookDescription;
+        bookData.prevFile=fileName;
+        bookData.prevCover=coverImageName;
+        bookData.fileName = bookFile;        
+        bookData.coverImageName = bookCover? bookCover.key:coverImageName;
+        bookData.coverImageType=coverImageType;
+      
+        try{
+            const booksEditResponse = await uploadApi.patch(`admin/books/${_id}`, bookData, authHeader);
+        
+            return booksEditResponse;
+           
+        }catch(err){
+             console.log(err);
+        }
 
 }
 export const AddToVideos = async ({ catalogueRef, title, creators_origin, thumbNailName,
@@ -188,15 +223,14 @@ export const AddToVideos = async ({ catalogueRef, title, creators_origin, thumbN
     videoData.catalogueRef = catalogueRef;
     videoData.title = title;
     videoData.creators_origin = creators_origin;
-    videoData.thumbNailName = thumbNailName;
+    videoData.thumbNailName =  thumbNailName;
     videoData.fileName = fileName;
     videoData.format = format;
     videoData.videoDescription = videoDescription;
     videoData.downloadable = downloadable;
 
     try {
-       
-
+               
         const videoAddresponse = await uploadApi.post('admin/videos/add', videoData, authHeader);
         
         return videoAddresponse;
@@ -324,6 +358,24 @@ export const uploadVideoSmallFileSize = async (uploadData, progressBarObject) =>
 
 
 }
+export const uploadSmallSizeVideoFile= async (fileToUpload)=>{
+    const loggedInCred = JSON.parse(localStorage.getItem("credentials"));
+    let authHeader = {
+        headers: { "Authorization": `Bearer ${loggedInCred.token}` }
+    };
+    try {
+
+        const formData = new FormData();
+        formData.append('videoFile' , fileToUpload);
+       
+        const videoUploadResponse = await uploadApi.post('admin/videos/temp', formData, authHeader);
+
+        return videoUploadResponse;
+    } catch (error) {
+        console.log(error);
+        throw error;
+    }
+}
 export const uploadBookToS3 = async (uploadFile, progressBarUpdate) => {
 
     const loggedInCred = JSON.parse(localStorage.getItem("credentials"));
@@ -399,7 +451,7 @@ export const uploadBookToS3 = async (uploadFile, progressBarUpdate) => {
 
 }
 
-export const uploadVideoToS3 = async (uploadFile, proggresBarObject) => {
+export const uploadVideoToS3 = async (uploadFile, progressBarUpdate) => {
 
     const loggedInCred = JSON.parse(localStorage.getItem("credentials"));
     let authHeader = {
@@ -408,15 +460,14 @@ export const uploadVideoToS3 = async (uploadFile, proggresBarObject) => {
 
     try {
         //initiate multipart upload     
-        const response = await uploadApi.post("admin/videos/fastupload/start/", { filetype: "video" }, authHeader);
+        const response = await uploadApi.post("admin/videos/fastupload/start/", { filetype:"video",tempUpload:true }, authHeader);
 
         const { data: { fileName: fileName, uploadId: uploadId } } = response.data;
 
         const CHUNK_SIZE = 8 * 1024 * 1024;
         const fileSize = uploadFile.size;
         const numberOfChunks = Math.ceil(fileSize / CHUNK_SIZE);
-
-
+        
         const uploadPromises = [];
         let uploadedChunks = 0;
         let start = 0, end;
@@ -437,11 +488,18 @@ export const uploadVideoToS3 = async (uploadFile, proggresBarObject) => {
             formData.append("fileName", fileName);
             formData.append('uploadId', uploadId);
 
-            const uploadPromise = uploadApi.post("admin/videos/fastupload/push", formData, authHeader)
+            const uploadPromise = uploadApi.post("admin/videos/fastupload/push", formData,
+                 authHeader).then(()=>{
+                  uploadedChunks++;
+                  const uploadProgress=Math.floor((uploadedChunks/numberOfChunks) * 100);
+                  progressBarUpdate(uploadProgress);
+                 });
             uploadPromises.push(uploadPromise);
-            start = end;
+            start = end;          
+
         }
         await Promise.all(uploadPromises);
+        console.log("Moving to complete upload...");
 
         // Complete multipart upload
         const uploadCompleteResp = await uploadApi.post('admin/videos/fastupload/end',
@@ -450,10 +508,10 @@ export const uploadVideoToS3 = async (uploadFile, proggresBarObject) => {
         if (!uploadCompleteResp) {
             throw new Error('Error completing upload');
         }
-        const { data: { fileData: { Key: filename } } } = uploadCompleteResp;
+        const { data: { fileData: { Key: filename,Location:fileUrl,signedUrl:signedURL } } } = uploadCompleteResp;
 
         if (uploadCompleteResp.status == 201)
-            return { message: "successful", status: 201, filename: filename };
+            return { message: "successful", status: 201, filename: filename,url:fileUrl,signedUrl:signedURL };
 
         return { message: "unsuccessful", filename: null };
 

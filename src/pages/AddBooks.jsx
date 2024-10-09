@@ -1,9 +1,9 @@
 import { authenticateAdmin } from "../auth/authHandler";
 import { catalogueDataLoader } from '../data-utils/dataLoaders';
-import { useNavigate, useLoaderData, useSearchParams, defer, Await } from "react-router-dom";
+import { useNavigate, useLoaderData,  defer, Await, useLocation } from "react-router-dom";
 import React, { Suspense } from "react";
 import { Tooltip } from 'react-tooltip';
-import { useEffect, useState } from "react";
+import {  useState } from "react";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faBook, faUpload } from '@fortawesome/free-solid-svg-icons';
 
@@ -22,28 +22,27 @@ export const loader = async () => {
 
 const AddBooks = () => {
 
-   
-    const [searchParams, setSearchParams] = useSearchParams();
-    const [formmode, setFormMode] = useState(searchParams.get("mode") || "add");
+    const formNavigationState=useLocation();
     const loadedCataloguePromise = useLoaderData();
-   
+    const [formmode, setFormMode] = useState(formNavigationState?.state?.mode || "add");
     const navigate = useNavigate();
-
+   
     const tooltipStyle = { backgroundColor: '#20134488' };
-
-    useEffect(() => {
-        if (formmode == "edit") {
-            console.log("Editing...");
-        }
-    }, [formmode]);   
+   
+    
+  
+    const bookToEdit=formmode=="edit" ? formNavigationState?.state?.resourceId : null;
+    
+    const handleFormReset=()=>{
+     formNavigationState.state=null; 
+     setFormMode("add");
+    }
 
     const goBackToPreviousPage = () => {
         navigate(-1);
-
     }
     const moveToBookListPage = () => {
         navigate("../books");
-
     }  
 
     return <div className="add-book-pg">
@@ -65,7 +64,8 @@ const AddBooks = () => {
                <Await  resolve={loadedCataloguePromise.catalogueData}>
                    { (catalogueCollection)=>{
                        const { data: { data: { catalogue: catalogueList } } } = catalogueCollection;
-                        return <BookUploader bookId={"66d8ea881adee872e2f7ef2c"} libraryCatalogue={catalogueList} />
+                        return <BookUploader mode={formmode}  bookId={bookToEdit} formModeReset={handleFormReset}
+                        libraryCatalogue={catalogueList} />
                       }
                    }
                </Await>

@@ -9,7 +9,7 @@ export const authenticateAdmin= async (loginPath)=>{
 
     try{
       
-        loginStatus= await uploadApi.get("loginAuth",
+        loginStatus= await api.get("loginAuth",
           {headers:{"Content-Type": "application/json","Authorization":`Bearer ${loggedInCred.token}`}
        })
        const {data:authResponse}=loginStatus; 
@@ -30,7 +30,7 @@ export const loginAdmin= async(userEmail,adminPass)=>{
 
     try {
     
-     return await uploadApi.post("/login/admin",{email:userEmail,password:adminPass});      
+     return await api.post("/login/admin",{email:userEmail,password:adminPass});      
 
     } catch (error) {
         throw error;
