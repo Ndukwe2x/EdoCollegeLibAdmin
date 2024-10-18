@@ -6,8 +6,6 @@ export function UTCDateToDateTimeString(UTCDate){
     let hours= UTCDate.getHours();
     let minutes=UTCDate.getMinutes();  
 
-    /* console.log('Hours: ',hours);
-    console.log('minutes',minutes); */
 
     minutes=(minutes<10?`0${minutes}`: minutes); //format minutes with leading zeros
     const meridian= (hours <= 11 ? "AM":"PM") ;   

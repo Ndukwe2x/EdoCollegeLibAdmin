@@ -481,7 +481,7 @@ a:hover{
   font-weight: bold;
  }
  
-  .inputControl{
+ .inputControl{
     border:1px groove #0997f5;
     height: 39px;
     width:80%;
@@ -636,19 +636,19 @@ button.search-btn{
  @media screen and (min-width:500px) {
     .section-login{     
         margin-top:120px;
-      }
-      .token-duration{
-        margin:45px auto 4px 12px ;
-      }
-      .btn-token-submit{
-        margin-left:30px;        
-       }
-       .add-book-frm label{
-        font-size:1em;
-        }
-        .addbookHdr .iconSize{
-          font-size:20px;   
-        }       
+     }
+    .token-duration{
+      margin:45px auto 4px 12px ;
+    }
+    .btn-token-submit{
+      margin-left:30px;        
+    }
+    .add-book-frm label{
+      font-size:1em;
+     }
+    .addbookHdr .iconSize{
+      font-size:20px;   
+    }       
        
  }
  @media screen and (min-width:650px){

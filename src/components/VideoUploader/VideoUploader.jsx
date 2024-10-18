@@ -59,9 +59,8 @@ const VideoUploader=({mode="add", libraryCatalogue, videoId=null, formModeReset 
           if(mode=="add")
             { 
               const submitVideoResponse= await AddToVideos(formData);
-              status=submitVideoResponse.data.status;
-              console.log("Submit response", submitVideoResponse);             
-              
+              status=submitVideoResponse?.data?.status;
+                            
             }
             else if(mode=="edit")
             {

@@ -56,9 +56,7 @@ const AdminLogin = () => {
         setPromptHeader("Network Error");
         setPromptBody(" Please check your internet connection");
         setPromptMode("warning");
-        setShowModal(true);
-       // alert("Please check your internet connection");
-
+        setShowModal(true);       
       }
         
       else

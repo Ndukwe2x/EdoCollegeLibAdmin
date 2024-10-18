@@ -1,7 +1,7 @@
 import api from '../api/axiosConfig';
 import { uploadApi } from '../api/axiosConfig';
-import {Buffer} from 'buffer/'
-//Buffer = require('buffer/').Buffer
+
+
 
 
 export const addToCatalogue = async ({ title, parentTitle, description }) => {

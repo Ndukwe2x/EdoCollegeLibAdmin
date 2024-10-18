@@ -43,9 +43,14 @@ const LibraryVideos = () => {
   const tableRecordStyle = { font: 'normal 0.92em Calibri', margin: '0' };
   const tooltipStyle = { backgroundColor: '#20134488' };
 
-  function handleEdit(videoId) {
-
-
+ 
+  function handleEdit(videoId){
+    
+    const navigationPath= '../addvideos';
+    const navigationState={mode:"edit",resourceId:videoId};
+       
+    navigate(navigationPath,{state:navigationState});
+    
   }
   function handleDelete(videoId) {
     setHeaderText("Delete Book");
