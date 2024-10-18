@@ -117,7 +117,7 @@ const SideBar=({})=>{
         </ul>
      </li>
      <li className='nav-item'>       
-      <Link className='nav-link'  to="http://libgen.rs/" target='_blank' >
+      <Link className='nav-link'  to="https://libgen.is/" target='_blank' >
          <FontAwesomeIcon icon={faDownload} /> 
          <span className='ms-1'>Book Downloads</span>        
         </Link>     
