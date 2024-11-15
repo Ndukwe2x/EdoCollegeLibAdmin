@@ -19,30 +19,28 @@ import SectionLoader from './components/SectionLoader/SectionLoader';
 
 
 const router=createBrowserRouter(createRoutesFromElements(
-            <>    
-              <Route path="/" element={<Home />} errorElement={<h2>There was an error!</h2>} /> 
-              <Route path="/dashboard" element={<DashboardSharedLayout/>} loader={dashboardLayoutLoader} > 
-                  <Route index element={<DashboardMain/>} loader={dashboardLoader}
-                   errorElement={<ErrorSharedLayout/>}
-                  />
-                  <Route path='catalogue' element={<CatalogueSetup/>} loader={catalogueLoader}
-                   action={actionCatalogue}  errorElement={<ErrorSharedLayout/>} />
-                    <Route path='token-generator' element={<TokenGenerator/>} loader={tokenGenLoader}
-                     errorElement={<ErrorSharedLayout/>}   />
-                    <Route path='addbooks' element={<AddBooks/>} loader={booksCatalogueLoader} 
-                     errorElement={<ErrorSharedLayout/>}/>
-                    <Route path='addvideos' element={<AddVideos/>} loader={videoCatalogueLoader}
-                     errorElement={<ErrorSharedLayout/>} />
-                    <Route path='books' element={<LibraryBooks />} loader={bookLoader} 
-                     errorElement={<ErrorSharedLayout/>}/>
-                    <Route path='videos' element={<LibraryVideos />} loader={videoLoader}
-                     errorElement={<ErrorSharedLayout/>} />
-                    <Route path='students' element={<StudentAccounts/>} loader={studentsLoader}
-                     errorElement={<ErrorSharedLayout/>} />
-              </Route>  
-              <Route path='/component-loading' element={<SectionLoader/>} />
-              <Route path='*' element={<NotFound404/>} /> 
-            </>        
+    <>    
+      <Route path="/" element={<Home />} errorElement={<h2>There was an error!</h2>} /> 
+      <Route path="/dashboard" element={<DashboardSharedLayout/>} loader={dashboardLayoutLoader} > 
+          <Route index element={<DashboardMain/>} loader={dashboardLoader}  errorElement={<ErrorSharedLayout/>} />
+          <Route path='catalogue' element={<CatalogueSetup/>} loader={catalogueLoader}
+            action={actionCatalogue}  errorElement={<ErrorSharedLayout/>} />
+            <Route path='token-generator' element={<TokenGenerator/>} loader={tokenGenLoader}
+              errorElement={<ErrorSharedLayout/>}   />
+            <Route path='addbooks' element={<AddBooks/>} loader={booksCatalogueLoader} 
+              errorElement={<ErrorSharedLayout/>}/>
+            <Route path='addvideos' element={<AddVideos/>} loader={videoCatalogueLoader}
+              errorElement={<ErrorSharedLayout/>} />
+            <Route path='books' element={<LibraryBooks />} loader={bookLoader} 
+              errorElement={<ErrorSharedLayout/>}/>
+            <Route path='videos' element={<LibraryVideos />} loader={videoLoader}
+              errorElement={<ErrorSharedLayout/>} />
+            <Route path='students' element={<StudentAccounts/>} loader={studentsLoader}
+              errorElement={<ErrorSharedLayout/>} />
+      </Route>  
+      <Route path='/component-loading' element={<SectionLoader/>} />
+      <Route path='*' element={<NotFound404/>} /> 
+    </>        
 ));
 
 function App() {

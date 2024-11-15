@@ -1,7 +1,7 @@
 import   './style-sidebar.css';
 import {Link} from 'react-router-dom';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
-import { faAdd, faBook,  faBusinessTime,  faDownload,  faFilm, faGraduationCap,
+import { faBook,  faDownload,  faFilm, faGraduationCap,
    faListOl, faPersonCircleCheck, faScrewdriverWrench, faUpload, faUserTie} from '@fortawesome/free-solid-svg-icons';
 
 const SideBar=({})=>{
@@ -117,10 +117,31 @@ const SideBar=({})=>{
         </ul>
      </li>
      <li className='nav-item'>       
-      <Link className='nav-link'  to="https://libgen.is/" target='_blank' >
+      <Link className='nav-link collapsed'  data-bs-target="#downloadmenu" data-bs-toggle="collapse" href='#' >
          <FontAwesomeIcon icon={faDownload} /> 
-         <span className='ms-1'>Book Downloads</span>        
-        </Link>     
+         <span className='ms-1'>Book Downloads</span>   
+         <i className="bi  bi-chevron-down ms-auto"></i>     
+        </Link>   
+        <ul id="downloadmenu" className="nav-content collapse"
+        data-bs-parent="#sidebar-nav">
+          <li>
+            <Link to="https://libgen.is/" target='_blank'>           
+              <span className='ms-1'>Library Genesis</span>
+            </Link>
+          </li>
+          <li>
+            <Link to="https://www.pdfdrive.com/" target='_blank'>           
+              <span className='ms-1'>PDF Drive</span>
+            </Link>
+          </li>
+          <li>
+            <Link to="https://books.google.com/" 
+            target='_blank'>           
+              <span className='ms-1'>Google Books</span>
+            </Link>
+          </li>
+                   
+        </ul>  
       </li>
    </ul>
   </aside>
