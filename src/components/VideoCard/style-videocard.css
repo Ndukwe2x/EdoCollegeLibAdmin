@@ -16,6 +16,12 @@
   }
 p.videoTitle {
   margin-bottom: 0;
+  max-width: 90%;
+  font:normal 0.9em Verdana, Geneva, sans-serif;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  
   }
   .playIcon{
     position: absolute;
